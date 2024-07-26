@@ -12,6 +12,7 @@
     />
     <title>IP 工具箱</title>
   </head>
+
   <style type="text/css">
     [id$="ipv6"],
     #myip-la {
@@ -582,6 +583,60 @@
         get_ip_other("https://api.ip.sb/geoip/" + searchTerm, "search");
         return false;
       }
+    </script>
+
+    <script>
+      function updateLatency(url, id) {
+        const startTime = performance.now();
+        const img = new Image();
+        img.onload = function () {
+          const endTime = performance.now();
+          const latency = endTime - startTime;
+          document.getElementById(id + "-flag").innerText = "可用";
+          document.getElementById(id + "-ms").innerText = Math.floor(latency);
+        };
+        img.onerror = function (event) {
+          console.log("img error:" + event);
+          document.getElementById(id + "-flag").innerText = "数据获取出错";
+        };
+        const randomParam = Date.now();
+        img.src = url + "?_=" + randomParam;
+      }
+
+      function startLatencyUpdates() {
+        const interval = 1000; // 每秒更新一次
+        const requests_img = [
+          {
+            url: "https://res.wx.qq.com/a/wx_fed/assets/res/NTI4MWU5.ico",
+            id: "wechat",
+          },
+          {
+            url: "https://github.githubassets.com/favicons/favicon.png",
+            id: "github",
+          },
+          { url: "https://www.cloudflare.com/favicon.ico", id: "cloudflare" },
+          { url: "https://www.baidu.com/favicon.ico", id: "baidu" },
+          {
+            url: "https://www.youtube.com/s/desktop/a669eefe/img/favicon.ico",
+            id: "youtube",
+          },
+          { url: "https://www.google.com/favicon.ico", id: "google" },
+          { url: "https://www.openai.com/favicon.ico", id: "openai" },
+          { url: "https://www.x.com/favicon.ico", id: "x" },
+          { url: "https://v.qq.com/favicon.ico", id: "vqq" },
+          { url: "https://www.iqiyi.com/favicon.ico", id: "iqiyi" },
+          { url: "https://www.youku.com/favicon.ico", id: "youku" },
+          { url: "https://www.mgtv.com/favicon.ico", id: "mgtv" },
+        ];
+
+        function updateAllLatencies() {
+          requests_img.forEach(({ url, id }) => updateLatency(url, id));
+        }
+
+        setInterval(updateAllLatencies, interval);
+      }
+
+      document.addEventListener("DOMContentLoaded", startLatencyUpdates);
     </script>
   </body>
 </html>
