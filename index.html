@@ -61,13 +61,13 @@
           font-size: 0.9em;
         }
         .info-item {
-          flex-direction: column;
-          display: block;
+          display: flex;
+          justify-content: space-between;
         }
         .label,
         .value {
           text-align: left;
-          width: 100%;
+          width: 50%;
           box-sizing: border-box;
         }
       }
@@ -152,7 +152,7 @@
 
         function createInfoItem(label, value) {
           return (
-            '<div class="row info-item d-flex"><div class="col-6 text-left label">' +
+            '<div class="row info-item"><div class="col-6 text-left label">' +
             label +
             ':</div><div class="col-6 text-right value">' +
             value +
