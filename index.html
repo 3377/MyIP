@@ -14,76 +14,20 @@
       async
       src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"
     ></script>
-    <style>
-      body,
-      html {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-        font-family: Arial, sans-serif;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        text-align: center;
-        background: linear-gradient(
-          120deg,
-          #a1c4fd 0%,
-          #c2e9fb 50%,
-          #f7d6e0 100%
-        );
-        color: black;
-      }
-      .container {
-        background-color: rgba(255, 255, 255, 0.8);
-        border-radius: 10px;
-        padding: 20px;
-        margin: 10px 0;
-        font-weight: bold;
-        max-width: 600px;
-        width: 90%;
-      }
-      .info-item {
-        margin: 5px 0;
-      }
-      .label,
-      .value {
-        margin: 2px 0;
-      }
-      .label {
-        text-align: left;
-      }
-      .value {
-        text-align: right;
-      }
-      @media (max-width: 600px) {
-        .container {
-          font-size: 0.9em;
-        }
-        .info-item {
-          display: flex;
-          justify-content: space-between;
-        }
-        .label,
-        .value {
-          text-align: left;
-          width: 50%;
-          box-sizing: border-box;
-        }
-      }
-    </style>
   </head>
   <body>
-    <div id="result" class="container">正在查询您的IP相关信息！</div>
-    <div class="container">
-      <div id="time-info">
-        <div id="beijingTime" class="time-info"></div>
-        <div id="utcTime" class="time-info"></div>
-        <div id="usTime" class="time-info"></div>
-      </div>
-      <div id="stats">
-        访问总数：<span id="busuanzi_value_site_pv"></span> 次<br />
-        访客总数：<span id="busuanzi_value_site_uv"></span> 人
+    <div class="container mt-5">
+      <div id="result" class="card p-3 mb-3">正在查询您的IP相关信息！</div>
+      <div class="card p-3">
+        <div id="time-info">
+          <div id="beijingTime" class="time-info"></div>
+          <div id="utcTime" class="time-info"></div>
+          <div id="usTime" class="time-info"></div>
+        </div>
+        <div id="stats" class="mt-3">
+          访问总数：<span id="busuanzi_value_site_pv"></span> 次<br />
+          访客总数：<span id="busuanzi_value_site_uv"></span> 人
+        </div>
       </div>
     </div>
 
@@ -152,9 +96,9 @@
 
         function createInfoItem(label, value) {
           return (
-            '<div class="row info-item"><div class="col-6 text-left label">' +
+            '<div class="row mb-2"><div class="col-6 text-left">' +
             label +
-            ':</div><div class="col-6 text-right value">' +
+            ':</div><div class="col-6 text-right">' +
             value +
             "</div></div>"
           );
