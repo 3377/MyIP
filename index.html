@@ -22,8 +22,6 @@
         align-items: center;
         flex-direction: column;
         text-align: center;
-      }
-      body {
         background: linear-gradient(
           120deg,
           #a1c4fd 0%,
@@ -32,26 +30,14 @@
         );
         color: black;
       }
-      #result {
+      .container {
         width: 90%;
         padding: 20px;
         background-color: rgba(255, 255, 255, 0.8);
         border-radius: 10px;
         font-size: 1.2em;
         font-weight: bold;
-        margin-top: 10px;
-        text-align: left;
-        overflow-x: auto; /* 添加水平滚动条 */
-      }
-      .time-info,
-      #stats {
-        width: 90%;
-        padding: 20px;
-        background-color: rgba(255, 255, 255, 0.8);
-        border-radius: 10px;
-        font-size: 1.2em;
-        font-weight: bold;
-        margin-top: 10px;
+        margin: 10px 0;
         text-align: left;
       }
       .info-item {
@@ -69,25 +55,28 @@
       }
       @media (max-width: 600px) {
         .info-item {
-          flex-direction: column;
-          text-align: left;
+          flex-direction: row;
+          justify-content: space-between;
         }
         .label,
         .value {
-          text-align: left;
+          flex: 1;
+          text-align: right;
         }
-        .value {
-          padding-top: 5px;
+        .container {
+          font-size: 0.9em;
         }
       }
     </style>
   </head>
   <body>
-    <div id="result">正在查询您的IP相关信息！</div>
-    <div class="time-info" id="beijingTime"></div>
-    <div class="time-info" id="utcTime"></div>
-    <div class="time-info" id="usTime"></div>
-    <div id="stats">
+    <div id="result" class="container">正在查询您的IP相关信息！</div>
+    <div class="container">
+      <div id="beijingTime" class="time-info"></div>
+      <div id="utcTime" class="time-info"></div>
+      <div id="usTime" class="time-info"></div>
+    </div>
+    <div id="stats" class="container">
       访问总数：<span id="busuanzi_value_site_pv"></span> 次<br />
       访客总数：<span id="busuanzi_value_site_uv"></span> 人
     </div>
@@ -117,19 +106,16 @@
               "User-Agent": "YourBot/1.0",
             },
             success: function (response) {
-              if (response && response.code === "Success") {
+              if (response.code === "Success") {
                 displayResult(ip, response.data);
               } else {
                 $("#result").html(
-                  "查询失败: " +
-                    (response.message || response.error || "未知错误")
+                  "查询失败: " + (response.message || "未知错误")
                 );
               }
             },
-            error: function (xhr) {
-              $("#result").html(
-                "查询失败，无法连接到服务器。错误码: " + xhr.status
-              );
+            error: function () {
+              $("#result").html("查询失败，无法连接到服务器。");
             },
           });
         }
@@ -170,21 +156,24 @@
         function updateTime() {
           setInterval(function () {
             var now = new Date();
-            var beijingTime = new Date(now.getTime() + 8 * 3600 * 1000)
-              .toISOString()
-              .replace("T", " ")
-              .replace(/\..+/, "");
-            var utcTime = new Date(now)
-              .toISOString()
-              .replace("T", " ")
-              .replace(/\..+/, "");
-            var usTime = new Date(now.getTime() - 5 * 3600 * 1000)
-              .toISOString()
-              .replace("T", " ")
-              .replace(/\..+/, "");
-            $("#beijingTime").html("北京时间：" + beijingTime);
-            $("#utcTime").html("UTC时间：" + utcTime);
-            $("#usTime").html("美国东部：" + usTime);
+            var beijingTime =
+              "北京时间：" +
+              new Date(now.getTime() + 8 * 3600 * 1000)
+                .toISOString()
+                .replace("T", " ")
+                .replace(/\..+/, "");
+            var utcTime =
+              "UTC时间：" +
+              new Date(now).toISOString().replace("T", " ").replace(/\..+/, "");
+            var usTime =
+              "美国东部：" +
+              new Date(now.getTime() - 5 * 3600 * 1000)
+                .toISOString()
+                .replace("T", " ")
+                .replace(/\..+/, "");
+            $("#beijingTime").html(beijingTime);
+            $("#utcTime").html(utcTime);
+            $("#usTime").html(usTime);
           }, 1000);
         }
       });
