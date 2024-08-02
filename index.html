@@ -40,6 +40,35 @@
         padding: 20px;
         margin: 10px 0;
         font-weight: bold;
+        max-width: 600px;
+        width: 90%;
+      }
+      .info-item {
+        margin: 5px 0;
+      }
+      .label,
+      .value {
+        margin: 2px 0;
+      }
+      .label {
+        text-align: left;
+      }
+      .value {
+        text-align: right;
+      }
+      @media (max-width: 600px) {
+        .container {
+          font-size: 0.9em;
+        }
+        .info-item {
+          flex-direction: column;
+        }
+        .label,
+        .value {
+          text-align: left;
+          width: 100%;
+          box-sizing: border-box;
+        }
       }
     </style>
   </head>
@@ -49,8 +78,6 @@
       <div id="beijingTime" class="time-info"></div>
       <div id="utcTime" class="time-info"></div>
       <div id="usTime" class="time-info"></div>
-    </div>
-    <div id="stats" class="container">
       访问总数：<span id="busuanzi_value_site_pv"></span> 次<br />
       访客总数：<span id="busuanzi_value_site_uv"></span> 人
     </div>
