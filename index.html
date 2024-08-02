@@ -62,6 +62,7 @@
         }
         .info-item {
           flex-direction: column;
+          display: block;
         }
         .label,
         .value {
@@ -75,11 +76,15 @@
   <body>
     <div id="result" class="container">正在查询您的IP相关信息！</div>
     <div class="container">
-      <div id="beijingTime" class="time-info"></div>
-      <div id="utcTime" class="time-info"></div>
-      <div id="usTime" class="time-info"></div>
-      访问总数：<span id="busuanzi_value_site_pv"></span> 次<br />
-      访客总数：<span id="busuanzi_value_site_uv"></span> 人
+      <div id="time-info">
+        <div id="beijingTime" class="time-info"></div>
+        <div id="utcTime" class="time-info"></div>
+        <div id="usTime" class="time-info"></div>
+      </div>
+      <div id="stats">
+        访问总数：<span id="busuanzi_value_site_pv"></span> 次<br />
+        访客总数：<span id="busuanzi_value_site_uv"></span> 人
+      </div>
     </div>
 
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -147,9 +152,9 @@
 
         function createInfoItem(label, value) {
           return (
-            '<div class="row info-item"><div class="col-6 text-left">' +
+            '<div class="row info-item d-flex"><div class="col-6 text-left label">' +
             label +
-            ':</div><div class="col-6 text-right">' +
+            ':</div><div class="col-6 text-right value">' +
             value +
             "</div></div>"
           );
