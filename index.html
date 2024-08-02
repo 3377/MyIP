@@ -5,6 +5,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>IP信息聚合</title>
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script
       async
@@ -31,46 +35,11 @@
         color: black;
       }
       .container {
-        width: 90%;
-        max-width: 600px;
-        padding: 20px;
         background-color: rgba(255, 255, 255, 0.8);
         border-radius: 10px;
-        font-size: 1.2em;
-        font-weight: bold;
+        padding: 20px;
         margin: 10px 0;
-        text-align: left;
-      }
-      .info-item {
-        display: flex;
-        justify-content: space-between;
-        margin: 5px 0;
-        flex-wrap: wrap; /* 支持换行 */
-      }
-      .label,
-      .value {
-        flex: 1;
-        margin: 2px 0; /* 添加边距以防止内容挤压 */
-      }
-      .label {
-        text-align: left;
-      }
-      .value {
-        text-align: right;
-      }
-      @media (max-width: 600px) {
-        .container {
-          font-size: 1em; /* 调整字体大小 */
-        }
-        .info-item {
-          flex-direction: column; /* 纵向排列 */
-        }
-        .label,
-        .value {
-          text-align: left; /* 左对齐 */
-          width: 100%; /* 占满可用宽度 */
-          box-sizing: border-box; /* 包含内边距和边框 */
-        }
+        font-weight: bold;
       }
     </style>
   </head>
@@ -86,6 +55,7 @@
       访客总数：<span id="busuanzi_value_site_uv"></span> 人
     </div>
 
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
       $(document).ready(function () {
         fetchPublicIP();
@@ -150,11 +120,11 @@
 
         function createInfoItem(label, value) {
           return (
-            '<div class="info-item"><span class="label">' +
+            '<div class="row info-item"><div class="col-6 text-left">' +
             label +
-            ':</span><span class="value">' +
+            ':</div><div class="col-6 text-right">' +
             value +
-            "</span></div>"
+            "</div></div>"
           );
         }
 
