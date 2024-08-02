@@ -14,19 +14,39 @@
       async
       src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"
     ></script>
+    <style>
+      .font-weight-bold {
+        font-weight: bold;
+      }
+      .card-container {
+        margin: 0 auto;
+        width: 50%;
+      }
+      .center-content {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+      }
+    </style>
   </head>
   <body>
     <div class="container mt-5">
-      <div id="result" class="card p-3 mb-3">正在查询您的IP相关信息！</div>
-      <div class="card p-3">
-        <div id="time-info">
-          <div id="beijingTime" class="time-info"></div>
-          <div id="utcTime" class="time-info"></div>
-          <div id="usTime" class="time-info"></div>
+      <!-- <h1 class="font-weight-bold mb-4 text-center">IP信息详情</h1> -->
+      <div class="card-container">
+        <div id="result" class="card p-3 mb-3 font-weight-bold">
+          正在查询您的IP相关信息！
         </div>
-        <div id="stats" class="mt-3">
-          访问总数：<span id="busuanzi_value_site_pv"></span> 次<br />
-          访客总数：<span id="busuanzi_value_site_uv"></span> 人
+        <div class="card p-3 font-weight-bold">
+          <div id="time-info" class="text-center">
+            <div id="beijingTime" class="time-info"></div>
+            <div id="utcTime" class="time-info"></div>
+            <div id="usTime" class="time-info"></div>
+          </div>
+          <div id="stats" class="mt-3 text-center">
+            <div>访问总数：<span id="busuanzi_value_site_pv"></span> 次</div>
+            <div>访客总数：<span id="busuanzi_value_site_uv"></span> 人</div>
+          </div>
         </div>
       </div>
     </div>
@@ -74,7 +94,7 @@
         function displayResult(ip, info) {
           var content = "";
           content += createInfoItem("您的IP", ip);
-          content += createInfoItem("大陆", info.continent);
+          content += createInfoItem("洲别", info.continent);
           content += createInfoItem("国家", info.country);
           content += createInfoItem("邮编", info.zipcode);
           content += createInfoItem("时区", info.timezone);
