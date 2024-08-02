@@ -32,6 +32,7 @@
       }
       .container {
         width: 90%;
+        max-width: 600px;
         padding: 20px;
         background-color: rgba(255, 255, 255, 0.8);
         border-radius: 10px;
@@ -44,13 +45,15 @@
         display: flex;
         justify-content: space-between;
         margin: 5px 0;
-        flex-wrap: wrap; /* 添加这行以支持换行 */
+        flex-wrap: wrap; /* 支持换行 */
       }
       .label,
       .value {
         flex: 1;
-        text-align: left;
         margin: 2px 0; /* 添加边距以防止内容挤压 */
+      }
+      .label {
+        text-align: left;
       }
       .value {
         text-align: right;
@@ -60,13 +63,13 @@
           font-size: 1em; /* 调整字体大小 */
         }
         .info-item {
-          flex-direction: column; /* 保持纵向排列 */
-          align-items: flex-start; /* 左对齐内容 */
+          flex-direction: column; /* 纵向排列 */
         }
         .label,
         .value {
-          text-align: left; /* 统一左对齐 */
+          text-align: left; /* 左对齐 */
           width: 100%; /* 占满可用宽度 */
+          box-sizing: border-box; /* 包含内边距和边框 */
         }
       }
     </style>
