@@ -1,148 +1,193 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>访问者 IP 信息</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <script
+      async
+      src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"
+    ></script>
     <style>
-        body, html {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column; /* 确保元素垂直排列 */
-            text-align: center;
-        }
-        body {
-            background: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 50%, #f7d6e0 100%);
-            color: black;
-        }
-        #result, .time-info, #stats {
-            width: 90%; /* 增加宽度以避免换行 */
-            padding: 20px;
-            background-color: rgba(255, 255, 255, 0.8);
-            border-radius: 10px;
-            font-size: 1.2em; /* 调整字体大小以确保信息可在一行内显示 */
-            font-weight: bold;
-            margin-top: 10px;
-        }
+      body,
+      html {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        text-align: center;
+      }
+      body {
+        background: linear-gradient(
+          120deg,
+          #a1c4fd 0%,
+          #c2e9fb 50%,
+          #f7d6e0 100%
+        );
+        color: black;
+      }
+      #result {
+        width: 90%;
+        padding: 20px;
+        background-color: rgba(255, 255, 255, 0.8);
+        border-radius: 10px;
+        font-size: 1.2em;
+        font-weight: bold;
+        margin-top: 10px;
+        text-align: left;
+        overflow-x: auto; /* 添加水平滚动条 */
+      }
+      .time-info,
+      #stats {
+        width: 90%;
+        padding: 20px;
+        background-color: rgba(255, 255, 255, 0.8);
+        border-radius: 10px;
+        font-size: 1.2em;
+        font-weight: bold;
+        margin-top: 10px;
+        text-align: left;
+      }
+      .info-item {
+        display: flex;
+        justify-content: space-between;
+        margin: 5px 0;
+      }
+      .label {
+        flex: 1;
+        text-align: left;
+      }
+      .value {
+        flex: 1;
+        text-align: right;
+      }
+      @media (max-width: 600px) {
         .info-item {
-            display: flex;
-            justify-content: space-between;
-            margin: 5px 0;
+          flex-direction: column;
+          text-align: left;
         }
-        .label {
-            flex: 1;
-            text-align: left;
+        .label,
+        .value {
+          text-align: left;
         }
         .value {
-            flex: 1;
-            text-align: right;
+          padding-top: 5px;
         }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div id="result">正在查询您的IP相关信息！</div>
     <div class="time-info" id="beijingTime"></div>
     <div class="time-info" id="utcTime"></div>
     <div class="time-info" id="usTime"></div>
     <div id="stats">
-        访问总数：<span id="busuanzi_value_site_pv"></span> 次<br />
-        访客总数：<span id="busuanzi_value_site_uv"></span> 人
+      访问总数：<span id="busuanzi_value_site_pv"></span> 次<br />
+      访客总数：<span id="busuanzi_value_site_uv"></span> 人
     </div>
 
     <script>
-        $(document).ready(function () {
-            fetchPublicIP();
-            updateTime();
+      $(document).ready(function () {
+        fetchPublicIP();
+        updateTime();
 
-            function fetchPublicIP() {
-                $.get("https://api.ipify.org?format=json", function (data) {
-                    fetchIPInfo(data.ip);
-                }).fail(function () {
-                    $("#result").html("无法获取公网IP地址。");
-                });
-            }
+        function fetchPublicIP() {
+          $.get("https://api.ipify.org?format=json", function (data) {
+            fetchIPInfo(data.ip);
+          }).fail(function () {
+            $("#result").html("无法获取公网IP地址。");
+          });
+        }
 
-            function fetchIPInfo(ip) {
-                var url = "https://qifu-api.baidubce.com/ip/geo/v1/district?ip=" + ip;
+        function fetchIPInfo(ip) {
+          var url = "https://qifu-api.baidubce.com/ip/geo/v1/district?ip=" + ip;
 
-                $.ajax({
-                    url: url,
-                    method: "GET",
-                    dataType: "json",
-                    headers: {
-                        Accept: "application/json",
-                        "User-Agent": "YourBot/1.0",
-                    },
-                    success: function (data) {
-                        if (data.code === "Success") {
-                            displayResult(ip, data);
-                        } else {
-                            $("#result").html("查询失败: " + data.msg);
-                        }
-                    },
-                    error: function () {
-                        $("#result").html("查询失败，无法连接到服务器。");
-                    },
-                });
-            }
+          $.ajax({
+            url: url,
+            method: "GET",
+            dataType: "json",
+            headers: {
+              Accept: "application/json",
+              "User-Agent": "YourBot/1.0",
+            },
+            success: function (response) {
+              if (response && response.code === "Success") {
+                displayResult(ip, response.data);
+              } else {
+                $("#result").html(
+                  "查询失败: " +
+                    (response.message || response.error || "未知错误")
+                );
+              }
+            },
+            error: function (xhr) {
+              $("#result").html(
+                "查询失败，无法连接到服务器。错误码: " + xhr.status
+              );
+            },
+          });
+        }
 
-            function displayResult(ip, data) {
-                var info = data.data;
-                var content = '';
-                content += createInfoItem("您的IP", ip);
-                content += createInfoItem("大陆", info.continent);
-                content += createInfoItem("国家", info.country);
-                content += createInfoItem("邮编", info.zipcode);
-                content += createInfoItem("时区", info.timezone);
-                content += createInfoItem("精度", info.accuracy);
-                content += createInfoItem("所有者", info.owner);
-                content += createInfoItem("ISP", info.isp);
-                content += createInfoItem("来源", info.source);
-                content += createInfoItem("地区码", info.areacode);
-                content += createInfoItem("行政码", info.adcode);
-                content += createInfoItem("ASN号", info.asnumber);
-                content += createInfoItem("纬度", info.lat);
-                content += createInfoItem("经度", info.lng);
-                content += createInfoItem("半径", info.radius);
-                content += createInfoItem("省份", info.prov);
-                content += createInfoItem("城市", info.city);
-                content += createInfoItem("区县", info.district);
-                $("#result").html(content);
-            }
+        function displayResult(ip, info) {
+          var content = "";
+          content += createInfoItem("您的IP", ip);
+          content += createInfoItem("大陆", info.continent);
+          content += createInfoItem("国家", info.country);
+          content += createInfoItem("邮编", info.zipcode);
+          content += createInfoItem("时区", info.timezone);
+          content += createInfoItem("精度", info.accuracy);
+          content += createInfoItem("所有者", info.owner);
+          content += createInfoItem("ISP", info.isp);
+          content += createInfoItem("来源", info.source);
+          content += createInfoItem("地区码", info.areacode);
+          content += createInfoItem("行政码", info.adcode);
+          content += createInfoItem("ASN号", info.asnumber);
+          content += createInfoItem("纬度", info.lat);
+          content += createInfoItem("经度", info.lng);
+          content += createInfoItem("半径", info.radius);
+          content += createInfoItem("省份", info.prov);
+          content += createInfoItem("城市", info.city);
+          content += createInfoItem("区县", info.district);
+          $("#result").html(content);
+        }
 
-            function createInfoItem(label, value) {
-                return '<div class="info-item"><span class="label">' + label + ':</span><span class="value">' + value + '</span></div>';
-            }
+        function createInfoItem(label, value) {
+          return (
+            '<div class="info-item"><span class="label">' +
+            label +
+            ':</span><span class="value">' +
+            value +
+            "</span></div>"
+          );
+        }
 
-            function updateTime() {
-                setInterval(function () {
-                    var now = new Date();
-                    var beijingTime = new Date(now.getTime() + 8 * 3600 * 1000)
-                      .toISOString()
-                      .replace("T", " ")
-                      .replace(/\..+/, "");
-                    var utcTime = new Date(now)
-                      .toISOString()
-                      .replace("T", " ")
-                      .replace(/\..+/, "");
-                    var usTime = new Date(now.getTime() - 5 * 3600 * 1000)
-                      .toISOString()
-                      .replace("T", " ")
-                      .replace(/\..+/, "");
-                    $("#beijingTime").html("北京时间：" + beijingTime);
-                    $("#utcTime").html("UTC时间：" + utcTime);
-                    $("#usTime").html("美国东部：" + usTime);
-                }, 1000);
-            }
-        });
+        function updateTime() {
+          setInterval(function () {
+            var now = new Date();
+            var beijingTime = new Date(now.getTime() + 8 * 3600 * 1000)
+              .toISOString()
+              .replace("T", " ")
+              .replace(/\..+/, "");
+            var utcTime = new Date(now)
+              .toISOString()
+              .replace("T", " ")
+              .replace(/\..+/, "");
+            var usTime = new Date(now.getTime() - 5 * 3600 * 1000)
+              .toISOString()
+              .replace("T", " ")
+              .replace(/\..+/, "");
+            $("#beijingTime").html("北京时间：" + beijingTime);
+            $("#utcTime").html("UTC时间：" + utcTime);
+            $("#usTime").html("美国东部：" + usTime);
+          }, 1000);
+        }
+      });
     </script>
-</body>
+  </body>
 </html>
