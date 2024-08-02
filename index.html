@@ -18,9 +18,11 @@
       .font-weight-bold {
         font-weight: bold;
       }
-      .card-container {
-        margin: 0 auto;
-        width: 50%;
+      @media (min-width: 768px) {
+        .card-container {
+          width: 50%;
+          margin: 0 auto;
+        }
       }
       .center-content {
         display: flex;
@@ -28,11 +30,20 @@
         align-items: center;
         height: 100%;
       }
+      .title {
+        margin: 0; /* Remove default margin */
+        padding: 10px 0; /* Adjust padding as needed */
+        font-size: 1.75rem; /* Font size for h3 */
+        text-align: center;
+      }
+      .card p {
+        margin: 0;
+      }
     </style>
   </head>
   <body>
-    <div class="container mt-5">
-      <!-- <h1 class="font-weight-bold mb-4 text-center">IP信息详情</h1> -->
+    <div class="container">
+      <h3 class="font-weight-bold title">IP信息详情</h3>
       <div class="card-container">
         <div id="result" class="card p-3 mb-3 font-weight-bold">
           正在查询您的IP相关信息！
@@ -94,7 +105,7 @@
         function displayResult(ip, info) {
           var content = "";
           content += createInfoItem("您的IP", ip);
-          content += createInfoItem("洲别", info.continent);
+          content += createInfoItem("大陆", info.continent);
           content += createInfoItem("国家", info.country);
           content += createInfoItem("邮编", info.zipcode);
           content += createInfoItem("时区", info.timezone);
