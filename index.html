@@ -105,7 +105,7 @@
         function displayResult(ip, info) {
           var content = "";
           content += createInfoItem("您的IP", ip);
-          content += createInfoItem("大陆", info.continent);
+          content += createInfoItem("洲别", info.continent);
           content += createInfoItem("国家", info.country);
           content += createInfoItem("邮编", info.zipcode);
           content += createInfoItem("时区", info.timezone);
@@ -117,8 +117,8 @@
           content += createInfoItem("行政码", info.adcode);
           content += createInfoItem("ASN号", info.asnumber);
           content += createInfoItem("纬度", info.lat);
-          // content += createInfoItem("经度", info.lng);
-          content += createInfoItem("半径", info.radius);
+          content += createInfoItem("经度", info.lng);
+          // content += createInfoItem("半径", info.radius);
           content += createInfoItem("省份", info.prov);
           content += createInfoItem("城市", info.city);
           content += createInfoItem("区县", info.district);
