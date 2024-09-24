@@ -69,12 +69,35 @@
       updateTime();
 
       function fetchPublicIP() {
-        $.get("https://ipv4_cm.itdog.cn", function (data) {
-          fetchIPInfo(data.trim()); // 使用获取到的IP信息，去掉可能的空格
-        }).fail(function () {
-          $("#result").html("无法获取公网IP地址。");
-        });
+  $.ajax({
+    url: "https://ipv4_cm.itdog.cn",
+    method: "GET",
+    dataType: "json",
+    success: function(data) {
+      if (data.type === "success" && data.version === "IPv4" && data.ip) {
+        var ip = data.ip;
+        // 检查IP地址格式
+        if (!isValidIP(ip)) {
+          $("#result").html("获取的IP地址格式不正确。");
+          return;
+        }
+        fetchIPInfo(ip);
+      } else {
+        $("#result").html("无法获取公网IP地址或返回数据格式不正确。");
       }
+    },
+    error: function() {
+      $("#result").html("无法连接到服务器。");
+    }
+  });
+}
+
+// 添加一个函数来检查IP地址格式
+function isValidIP(ip) {
+  var ipv4Regex = /^((25[0-5]|2[0-4][0-9]|?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|?[0-9][0-9]?)$/;
+  return ipv4Regex.test(ip);
+}
+
 
       function fetchIPInfo(ip) {
         var url = "https://qifu-api.baidubce.com/ip/geo/v1/district?ip=" + ip;
