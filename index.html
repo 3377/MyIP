@@ -65,19 +65,11 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
       $(document).ready(function () {
-        fetchPublicIP();
+        fetchIPInfo(); // 直接调用函数，无需传递IP参数
         updateTime();
 
-        function fetchPublicIP() {
-          $.get("https://api.ipify.org?format=json", function (data) {
-            fetchIPInfo(data.ip);
-          }).fail(function () {
-            $("#result").html("无法获取公网IP地址。");
-          });
-        }
-
-        function fetchIPInfo(ip) {
-          var url = "https://qifu-api.baidubce.com/ip/geo/v1/district?ip=" + ip;
+        function fetchIPInfo() {
+          var url = "https://qifu-api.baidubce.com/ip/geo/v1/district"; // 不传递IP参数
 
           $.ajax({
             url: url,
@@ -89,7 +81,7 @@
             },
             success: function (response) {
               if (response.code === "Success") {
-                displayResult(ip, response.data);
+                displayResult(response.data.client_ip, response.data);
               } else {
                 $("#result").html(
                   "查询失败: " + (response.message || "未知错误")
@@ -104,7 +96,7 @@
 
         function displayResult(ip, info) {
           var content = "";
-          content += createInfoItem("您的IP", ip);
+          content += createInfoItem("您的IP", ip || info.ip);
           content += createInfoItem("洲别", info.continent);
           content += createInfoItem("国家", info.country);
           content += createInfoItem("邮编", info.zipcode);
@@ -118,7 +110,6 @@
           content += createInfoItem("ASN号", info.asnumber);
           content += createInfoItem("纬度", info.lat);
           content += createInfoItem("经度", info.lng);
-          // content += createInfoItem("半径", info.radius);
           content += createInfoItem("省份", info.prov);
           content += createInfoItem("城市", info.city);
           content += createInfoItem("区县", info.district);
@@ -130,7 +121,7 @@
             '<div class="row mb-2"><div class="col-6 text-left">' +
             label +
             ':</div><div class="col-6 text-right">' +
-            value +
+            (value || "未知") +
             "</div></div>"
           );
         }
