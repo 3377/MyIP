@@ -9,10 +9,6 @@
       rel="stylesheet"
     />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script
-      async
-      src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"
-    ></script>
     <style>
       body {
         background-color: #e8f4f8;
@@ -161,14 +157,16 @@
           );
           content += createInfoItem(
             "访问总数",
-            '<span id="busuanzi_value_site_pv"></span>'
+            '<span id="busuanzi_value_site_pv">-</span>'
           );
           content += createInfoItem(
             "访客总数",
-            '<span id="busuanzi_value_site_uv"></span>'
+            '<span id="busuanzi_value_site_uv">-</span>'
           );
           $("#result").html(content);
-          updateTime();
+
+          // 加载访问统计脚本
+          loadBusuanziScript();
         }
 
         function createInfoItem(label, value) {
@@ -198,6 +196,23 @@
 
         function formatDate(date) {
           return date.toISOString().replace("T", " ").replace(/\..+/, "");
+        }
+
+        function loadBusuanziScript() {
+          $.getScript(
+            "//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js",
+            function () {
+              // 脚本加载完成后，等待一段时间再检查统计数据
+              setTimeout(function () {
+                if ($("#busuanzi_value_site_pv").text() === "") {
+                  $("#busuanzi_value_site_pv").text("无法获取");
+                }
+                if ($("#busuanzi_value_site_uv").text() === "") {
+                  $("#busuanzi_value_site_uv").text("无法获取");
+                }
+              }, 3000); // 等待3秒
+            }
+          );
         }
       });
     </script>
