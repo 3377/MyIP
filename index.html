@@ -133,13 +133,13 @@
 
         function displayResult(ip, info) {
           var content = "";
-          content += createInfoItem("IP", ip);
+          content += createInfoItem("您的IP", ip);
           content += createInfoItem("洲别", info.continent);
           content += createInfoItem("国家", info.country);
           content += createInfoItem("邮编", info.zipcode);
           content += createInfoItem("时区", info.timezone);
           content += createInfoItem("精度", info.accuracy);
-          content += createInfoItem("归属", info.owner);
+          content += createInfoItem("所有者", info.owner);
           content += createInfoItem("ISP", info.isp);
           content += createInfoItem("来源", info.source);
           content += createInfoItem("地区码", info.areacode);
@@ -155,14 +155,17 @@
             '<span id="beijingTime"></span>'
           );
           content += createInfoItem("UTC时间", '<span id="utcTime"></span>');
-          content += createInfoItem("美东时间", '<span id="usTime"></span>');
+          content += createInfoItem(
+            "美国东部时间",
+            '<span id="usTime"></span>'
+          );
           content += createInfoItem(
             "访问总数",
-            '<span id="busuanzi_value_site_pv">0</span>'
+            '<span id="busuanzi_value_site_pv"></span>'
           );
           content += createInfoItem(
             "访客总数",
-            '<span id="busuanzi_value_site_uv">0</span>'
+            '<span id="busuanzi_value_site_uv"></span>'
           );
           $("#result").html(content);
           updateTime();
