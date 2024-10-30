@@ -9,6 +9,10 @@
       rel="stylesheet"
     />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
     <style>
       body {
         background-color: #f0f5f9;
@@ -102,7 +106,31 @@
     <div class="container">
       <div class="card">
         <div class="card-header">
-          <h1 class="text-center">IP信息聚合 🌍</h1>
+          <div class="d-flex justify-content-center align-items-center">
+            <h1 class="text-center me-2">IP信息聚合</h1>
+            <i
+              class="fas fa-search"
+              style="
+                cursor: pointer;
+                font-size: 1.8rem;
+                color: rgba(255, 255, 255, 0.8);
+              "
+              onclick="showSearchInput()"
+            ></i>
+          </div>
+          <div id="searchBox" class="mt-2" style="display: none">
+            <input
+              type="text"
+              class="form-control text-center"
+              placeholder="请输入要查询的IP地址"
+              id="ipInput"
+              style="
+                background: rgba(255, 255, 255, 0.1);
+                color: white;
+                border: 1px solid rgba(255, 255, 255, 0.2);
+              "
+            />
+          </div>
         </div>
         <div class="card-body">
           <div id="result" class="loading">
@@ -119,7 +147,121 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-      // 将 copyIP 函数移到全局作用域
+      // 1. 首先定义所有全局函数
+      function fetchIPInfo(ip) {
+        var url = "https://qifu-api.baidubce.com/ip/geo/v1/district?ip=" + ip;
+        $.ajax({
+          url: url,
+          method: "GET",
+          dataType: "json",
+          headers: {
+            Accept: "application/json",
+          },
+          success: function (response) {
+            if (response.code === "Success") {
+              displayResult(ip, response.data);
+            } else {
+              $("#result").html(
+                "查询失败: " + (response.message || "未知错误")
+              );
+            }
+          },
+          error: function () {
+            $("#result").html("查询失败，无法连接到服务器。");
+          },
+        });
+      }
+
+      function displayResult(ip, info) {
+        var content = "";
+        content += createInfoItem(
+          "您的IP",
+          `<span class="ip-value" onclick="window.copyIP('${ip}')">${ip}<span class="copy-tooltip">已复制!</span></span>`
+        );
+        content += createInfoItem("洲别", info.continent);
+        content += createInfoItem("国家", info.country);
+        content += createInfoItem("邮编", info.zipcode);
+        content += createInfoItem("时区", info.timezone);
+        content += createInfoItem("精度", info.accuracy);
+        content += createInfoItem("所有者", info.owner);
+        content += createInfoItem("ISP", info.isp);
+        content += createInfoItem("来源", info.source);
+        content += createInfoItem("地区码", info.areacode);
+        content += createInfoItem("行政码", info.adcode);
+        content += createInfoItem("ASN号", info.asnumber);
+        content += createInfoItem("纬度", info.lat);
+        content += createInfoItem("经度", info.lng);
+        content += createInfoItem("省份", info.prov);
+        content += createInfoItem("城市", info.city);
+        content += createInfoItem("区县", info.district);
+        content += createInfoItem("北京时间", '<span id="beijingTime"></span>');
+        content += createInfoItem("UTC时间", '<span id="utcTime"></span>');
+        content += createInfoItem("美东时间", '<span id="usTime"></span>');
+        content += createInfoItem(
+          "访问总数",
+          '<span id="busuanzi_value_site_pv">-</span>'
+        );
+        content += createInfoItem(
+          "访客总数",
+          '<span id="busuanzi_value_site_uv">-</span>'
+        );
+        $("#result").html(content);
+
+        // 加载访问统计脚本
+        loadBusuanziScript();
+      }
+
+      function createInfoItem(label, value) {
+        return (
+          '<div class="info-row"><span class="info-label">' +
+          label +
+          ':</span><span class="info-value">' +
+          value +
+          "</span></div>"
+        );
+      }
+
+      function executeIPQuery(ip) {
+        $("#result").html(`
+          <div class="loading">
+            <div>
+              <div class="spinner-border text-primary mb-2" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+              <div>正在查询IP相关信息...</div>
+            </div>
+          </div>
+        `);
+
+        $("#searchBox").slideUp(200);
+        $("#ipInput").val("");
+        fetchIPInfo(ip);
+      }
+
+      // 2. 然后定义全局事件处理函数
+      window.showSearchInput = function () {
+        $("#searchBox").slideDown(200);
+        $("#ipInput").focus();
+
+        setTimeout(() => {
+          $(document).on("click.searchbox", function (e) {
+            const ip = $("#ipInput").val().trim();
+
+            if (
+              !$(e.target).closest("#ipInput").length &&
+              !$(e.target).closest(".fa-search").length
+            ) {
+              if (ip) {
+                executeIPQuery(ip);
+              } else {
+                $("#searchBox").slideUp(200);
+              }
+              $(document).off("click.searchbox");
+            }
+          });
+        }, 0);
+      };
+
       window.copyIP = function (ip) {
         navigator.clipboard
           .writeText(ip)
@@ -138,7 +280,18 @@
           });
       };
 
+      // 3. 最后是 document ready 事件
       $(document).ready(function () {
+        // 初始化事件监听
+        $("#ipInput").on("keypress", function (e) {
+          if (e.which === 13) {
+            const ip = $(this).val().trim();
+            if (ip) {
+              executeIPQuery(ip);
+            }
+          }
+        });
+
         fetchPublicIP();
         updateTime();
 
@@ -158,84 +311,6 @@
               $("#result").html("无法获取公网IP地址。");
             },
           });
-        }
-
-        function fetchIPInfo(ip) {
-          var url = "https://qifu-api.baidubce.com/ip/geo/v1/district?ip=" + ip;
-
-          $.ajax({
-            url: url,
-            method: "GET",
-            dataType: "json",
-            headers: {
-              Accept: "application/json",
-              "User-Agent": "YourBot/1.0",
-            },
-            success: function (response) {
-              if (response.code === "Success") {
-                displayResult(ip, response.data);
-              } else {
-                $("#result").html(
-                  "查询失败: " + (response.message || "未知错误")
-                );
-              }
-            },
-            error: function () {
-              $("#result").html("查询失败，无法连接到服务器。");
-            },
-          });
-        }
-
-        function displayResult(ip, info) {
-          var content = "";
-          content += createInfoItem(
-            "您的IP",
-            `<span class="ip-value" onclick="window.copyIP('${ip}')">${ip}<span class="copy-tooltip">已复制!</span></span>`
-          );
-          content += createInfoItem("洲别", info.continent);
-          content += createInfoItem("国家", info.country);
-          content += createInfoItem("邮编", info.zipcode);
-          content += createInfoItem("时区", info.timezone);
-          content += createInfoItem("精度", info.accuracy);
-          content += createInfoItem("所有者", info.owner);
-          content += createInfoItem("ISP", info.isp);
-          content += createInfoItem("来源", info.source);
-          content += createInfoItem("地区码", info.areacode);
-          content += createInfoItem("行政码", info.adcode);
-          content += createInfoItem("ASN号", info.asnumber);
-          content += createInfoItem("纬度", info.lat);
-          content += createInfoItem("经度", info.lng);
-          content += createInfoItem("省份", info.prov);
-          content += createInfoItem("城市", info.city);
-          content += createInfoItem("区县", info.district);
-          content += createInfoItem(
-            "北京时间",
-            '<span id="beijingTime"></span>'
-          );
-          content += createInfoItem("UTC时间", '<span id="utcTime"></span>');
-          content += createInfoItem("美东时间", '<span id="usTime"></span>');
-          content += createInfoItem(
-            "访问总数",
-            '<span id="busuanzi_value_site_pv">-</span>'
-          );
-          content += createInfoItem(
-            "访客总数",
-            '<span id="busuanzi_value_site_uv">-</span>'
-          );
-          $("#result").html(content);
-
-          // 加载访问统计脚本
-          loadBusuanziScript();
-        }
-
-        function createInfoItem(label, value) {
-          return (
-            '<div class="info-row"><span class="info-label">' +
-            label +
-            ':</span><span class="info-value">' +
-            value +
-            "</span></div>"
-          );
         }
 
         function updateTime() {
