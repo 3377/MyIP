@@ -11,8 +11,8 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
       body {
-        background-color: #e8f4f8;
-        background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4"%3E%3Cpath fill="%239C92AC" fill-opacity="0.2" d="M1 3h1v1H1V3zm2-2h1v1H3V1z"%3E%3C/path%3E%3C/svg%3E');
+        background-color: #f0f5f9;
+        background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4"%3E%3Cpath fill="%239C92AC" fill-opacity="0.1" d="M1 3h1v1H1V3zm2-2h1v1H3V1z"%3E%3C/path%3E%3C/svg%3E');
         display: flex;
         justify-content: center;
         align-items: center;
@@ -21,7 +21,7 @@
       }
       .container {
         max-width: 800px;
-        padding: 20px;
+        padding: 10px;
       }
       .card {
         border-radius: 20px;
@@ -36,14 +36,16 @@
         padding: 20px;
       }
       .card-body {
-        padding: 0; /* 移除卡片内容的内边距 */
+        max-height: 80vh;
+        overflow-y: auto;
       }
       .info-row {
         display: flex;
         justify-content: space-between;
-        padding: 12px 20px; /* 为每行添加左右内边距 */
+        padding: 8px 20px;
         border-bottom: 1px solid #e0e0e0;
         transition: background-color 0.3s ease;
+        font-size: 0.9rem;
       }
       .info-row:last-child {
         border-bottom: none;
@@ -59,9 +61,26 @@
         color: #6c757d;
       }
       h1 {
-        font-size: 2.5rem;
+        font-size: 1.8rem;
         margin-bottom: 0;
         font-weight: 300;
+      }
+      .loading {
+        text-align: center;
+        padding: 20px;
+        color: #6c757d;
+        animation: pulse 1.5s infinite;
+      }
+      @keyframes pulse {
+        0% {
+          opacity: 0.6;
+        }
+        50% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0.6;
+        }
       }
     </style>
   </head>
@@ -72,7 +91,14 @@
           <h1 class="text-center">IP信息聚合 🌍</h1>
         </div>
         <div class="card-body">
-          <div id="result">正在查询您的IP相关信息...</div>
+          <div id="result" class="loading">
+            <div>
+              <div class="spinner-border text-primary mb-2" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+              <div>正在查询您的IP相关信息...</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
