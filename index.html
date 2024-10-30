@@ -147,31 +147,35 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-      // 1. 首先定义所有全局函数
-      function fetchIPInfo(ip) {
-        var url = "https://qifu-api.baidubce.com/ip/geo/v1/district?ip=" + ip;
-        $.ajax({
-          url: url,
-          method: "GET",
-          dataType: "json",
-          headers: {
-            Accept: "application/json",
-          },
-          success: function (response) {
-            if (response.code === "Success") {
-              displayResult(ip, response.data);
-            } else {
-              $("#result").html(
-                "查询失败: " + (response.message || "未知错误")
-              );
-            }
-          },
-          error: function () {
-            $("#result").html("查询失败，无法连���到服务器。");
-          },
-        });
+      // 1. 首先定义所有工具函数
+      function loadBusuanziScript() {
+        $.getScript(
+          "//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js",
+          function () {
+            // 脚本加载完成后，等待一段时间再检查统计数据
+            setTimeout(function () {
+              if ($("#busuanzi_value_site_pv").text() === "") {
+                $("#busuanzi_value_site_pv").text("无法获取");
+              }
+              if ($("#busuanzi_value_site_uv").text() === "") {
+                $("#busuanzi_value_site_uv").text("无法获取");
+              }
+            }, 3000); // 等待3秒
+          }
+        );
       }
 
+      function createInfoItem(label, value) {
+        return (
+          '<div class="info-row"><span class="info-label">' +
+          label +
+          ':</span><span class="info-value">' +
+          value +
+          "</span></div>"
+        );
+      }
+
+      // 2. 然后定义主要功能函数
       function displayResult(ip, info) {
         var content = "";
         content += createInfoItem(
@@ -205,20 +209,33 @@
           "访客总数",
           '<span id="busuanzi_value_site_uv">-</span>'
         );
-        $("#result").html(content);
 
-        // 加载访问统计脚本
+        $("#result").html(content);
         loadBusuanziScript();
       }
 
-      function createInfoItem(label, value) {
-        return (
-          '<div class="info-row"><span class="info-label">' +
-          label +
-          ':</span><span class="info-value">' +
-          value +
-          "</span></div>"
-        );
+      function fetchIPInfo(ip) {
+        var url = "https://qifu-api.baidubce.com/ip/geo/v1/district?ip=" + ip;
+        $.ajax({
+          url: url,
+          method: "GET",
+          dataType: "json",
+          headers: {
+            Accept: "application/json",
+          },
+          success: function (response) {
+            if (response.code === "Success") {
+              displayResult(ip, response.data);
+            } else {
+              $("#result").html(
+                "查询失败: " + (response.message || "未知错误")
+              );
+            }
+          },
+          error: function () {
+            $("#result").html("查询失败，无法连到服务器。");
+          },
+        });
       }
 
       function executeIPQuery(ip) {
@@ -238,51 +255,9 @@
         fetchIPInfo(ip);
       }
 
-      // 2. 然后定义全局事件处理函数
-      window.showSearchInput = function () {
-        $("#searchBox").slideDown(200);
-        $("#ipInput").focus();
-
-        setTimeout(() => {
-          $(document).on("click.searchbox", function (e) {
-            const ip = $("#ipInput").val().trim();
-
-            if (
-              !$(e.target).closest("#ipInput").length &&
-              !$(e.target).closest(".fa-search").length
-            ) {
-              if (ip) {
-                executeIPQuery(ip);
-              } else {
-                $("#searchBox").slideUp(200);
-              }
-              $(document).off("click.searchbox");
-            }
-          });
-        }, 0);
-      };
-
-      window.copyIP = function (ip) {
-        navigator.clipboard
-          .writeText(ip)
-          .then(function () {
-            // 显示提示
-            const tooltip = $(".ip-value .copy-tooltip");
-            tooltip.fadeIn(200);
-
-            // 1.5秒后隐藏提示
-            setTimeout(() => {
-              tooltip.fadeOut(200);
-            }, 1500);
-          })
-          .catch(function (err) {
-            console.error("复制失败:", err);
-          });
-      };
-
       // 3. 最后是 document ready 事件
       $(document).ready(function () {
-        // ���始化事件监听
+        // 始化事件监听
         $("#ipInput").on("keypress", function (e) {
           if (e.which === 13) {
             const ip = $(this).val().trim();
@@ -332,23 +307,6 @@
           return date.toISOString().replace("T", " ").replace(/\..+/, "");
         }
 
-        function loadBusuanziScript() {
-          $.getScript(
-            "//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js",
-            function () {
-              // 脚本加载完成后，等待一段时间再检查统计数据
-              setTimeout(function () {
-                if ($("#busuanzi_value_site_pv").text() === "") {
-                  $("#busuanzi_value_site_pv").text("无法获取");
-                }
-                if ($("#busuanzi_value_site_uv").text() === "") {
-                  $("#busuanzi_value_site_uv").text("无法获取");
-                }
-              }, 3000); // 等待3秒
-            }
-          );
-        }
-
         $(document).ready(function () {
           const observer = new MutationObserver(function (mutations) {
             mutations.forEach(function (mutation) {
@@ -365,6 +323,47 @@
           });
         });
       });
+
+      window.showSearchInput = function () {
+        $("#searchBox").slideDown(200);
+        $("#ipInput").focus();
+
+        setTimeout(() => {
+          $(document).on("click.searchbox", function (e) {
+            const ip = $("#ipInput").val().trim();
+
+            if (
+              !$(e.target).closest("#ipInput").length &&
+              !$(e.target).closest(".fa-search").length
+            ) {
+              if (ip) {
+                executeIPQuery(ip);
+              } else {
+                $("#searchBox").slideUp(200);
+              }
+              $(document).off("click.searchbox");
+            }
+          });
+        }, 0);
+      };
+
+      window.copyIP = function (ip) {
+        navigator.clipboard
+          .writeText(ip)
+          .then(function () {
+            // 显示提示
+            const tooltip = $(".ip-value .copy-tooltip");
+            tooltip.fadeIn(200);
+
+            // 1.5秒后隐藏提示
+            setTimeout(() => {
+              tooltip.fadeOut(200);
+            }, 1500);
+          })
+          .catch(function (err) {
+            console.error("复制失败:", err);
+          });
+      };
     </script>
   </body>
 </html>
