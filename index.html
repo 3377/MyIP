@@ -178,7 +178,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-      // 1. 首先定义所有工具函数
+      // 1. 首先定义所工具函数
       function loadBusuanziScript() {
         $.getScript(
           "//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js",
@@ -321,20 +321,54 @@
 
         function updateTime() {
           function update() {
-            var now = new Date();
-            $("#beijingTime").text(
-              formatDate(new Date(now.getTime() + 8 * 3600 * 1000))
+            const now = new Date();
+
+            // 获取当前的UTC时间戳
+            const utcTime = now.getTime() + now.getTimezoneOffset() * 60000;
+
+            // 北京时间 (UTC+8)
+            const beijingTime = new Date(utcTime + 8 * 3600000);
+            $("#beijingTime").text(formatDate(beijingTime));
+
+            // UTC时间
+            const utc = new Date(utcTime);
+            $("#utcTime").text(formatDate(utc));
+
+            // 美东时间 (UTC-4/UTC-5)
+            const usOffset = isDST() ? -4 : -5;
+            const usTime = new Date(utcTime + usOffset * 3600000);
+            $("#usTime").text(formatDate(usTime));
+          }
+
+          // 判断是否为夏令时
+          function isDST() {
+            // 美国夏令时：3月第二个周日开始，11月第一个周日结束
+            const today = new Date();
+            const year = today.getFullYear();
+            const march = new Date(year, 2, 1);
+            const november = new Date(year, 10, 1);
+
+            // 获取3月第二个周日
+            const secondSundayInMarch = new Date(
+              march.setDate(14 - march.getDay())
             );
-            $("#utcTime").text(formatDate(now));
-            $("#usTime").text(
-              formatDate(new Date(now.getTime() - 5 * 3600 * 1000))
+
+            // 获取11月第一个周日
+            const firstSundayInNovember = new Date(
+              november.setDate(7 - november.getDay())
+            );
+
+            return (
+              today >= secondSundayInMarch && today < firstSundayInNovember
             );
           }
+
           update();
           setInterval(update, 1000);
         }
 
         function formatDate(date) {
+          const year = date.getFullYear();
           const month = String(date.getMonth() + 1).padStart(2, "0");
           const day = String(date.getDate()).padStart(2, "0");
           const hours = String(date.getHours()).padStart(2, "0");
@@ -346,7 +380,7 @@
             return `${month}-${day} ${hours}:${minutes}:${seconds}`;
           }
           // 桌面端保持完整格式
-          return `${date.getFullYear()}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+          return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
         }
 
         $(document).ready(function () {
