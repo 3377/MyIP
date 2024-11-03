@@ -26,13 +26,12 @@
       .container {
         max-width: 800px;
         padding: 0;
-        height: 100vh;
+        min-height: 100vh;
         display: flex;
         align-items: center;
       }
       .card {
         width: 100%;
-        max-height: 99vh;
         border-radius: 20px !important;
         overflow: hidden;
       }
@@ -101,6 +100,15 @@
         border-radius: 4px;
         font-size: 12px;
         display: none;
+      }
+      @media (max-width: 768px) {
+        .container {
+          padding: 15px;
+          align-items: flex-start;
+        }
+        .card {
+          margin: 10px 0;
+        }
       }
     </style>
   </head>
