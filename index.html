@@ -299,25 +299,26 @@
           },
           success: function (baiduResponse) {
             if (baiduResponse.code === "Success") {
-              // 获取hstz-api的经纬度数据
+              // 获取IPlocate的经纬度数据
               $.ajax({
-                url: `https://hstz-api.hf.space/${ip}`,
+                url: `https://www.iplocate.io/api/lookup/${ip}`,
                 method: "GET",
                 dataType: "json",
-                success: function (hstzResponse) {
+                success: function (iplocateResponse) {
                   const data = { ...baiduResponse.data };
-                  if (hstzResponse && hstzResponse.data) {
-                    data.timezone = hstzResponse.data.timezone || data.timezone;
-                    data.accuracy = hstzResponse.data.latitude ? "高精度" : "低精度";
+                  if (iplocateResponse) {
+                    data.timezone = iplocateResponse.time_zone || data.timezone;
+                    data.accuracy = iplocateResponse.latitude ? "高精度" : "低精度";
                     data.areacode = data.prov + data.city;
-                    data.asnumber = hstzResponse.data.asn || data.asnumber;
-                    data.lat = hstzResponse.data.latitude || data.lat;
-                    data.lng = hstzResponse.data.longitude || data.lng;
+                    data.asnumber = iplocateResponse.asn || data.asnumber;
+                    data.lat = iplocateResponse.latitude?.toFixed(6) || data.lat;
+                    data.lng = iplocateResponse.longitude?.toFixed(6) || data.lng;
                   }
                   displayResult(ip, data);
                 },
-                error: function () {
-                  // 如果hstz-api获取失败，仍然显示百度API的数据
+                error: function (xhr, status, error) {
+                  console.log("IPlocate API error:", error);
+                  // 如果IPlocate获取失败，仍然显示百度API的数据
                   displayResult(ip, baiduResponse.data);
                 }
               });
