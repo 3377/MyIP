@@ -228,6 +228,7 @@
         content += createInfoItem("省份", info.prov);
         content += createInfoItem("城市", info.city);
         content += createInfoItem("区县", info.district);
+        content += createInfoItem("街道", info.street || "正在获取...");
         content += createInfoItem("北京时间", '<span id="beijingTime"></span>');
         content += createInfoItem("UTC时间", '<span id="utcTime"></span>');
         content += createInfoItem("美东时间", '<span id="usTime"></span>');
@@ -242,6 +243,48 @@
 
         $("#result").html(content);
         loadBusuanziScript();
+        
+        // 如果有经纬度信息，获取详细地址
+        if (info.lat && info.lng) {
+          fetchDetailedAddress(info.lng, info.lat, info.prov, info.city, info.district);
+        }
+      }
+
+      function fetchDetailedAddress(lng, lat, province, city, district) {
+        // 高德地图API密钥
+        const key = 'ece94aa020470b1b8b633f1eeffde6da';
+        const url = `https://restapi.amap.com/v3/geocode/regeo?key=${key}&location=${lng},${lat}&extensions=all&radius=500&poitype=街道&city=${encodeURIComponent(city)}`;
+        
+        $.ajax({
+          url: url,
+          method: "GET",
+          dataType: "json",
+          success: function(response) {
+            if (response.status === "1" && response.regeocode) {
+              const addressComponent = response.regeocode.addressComponent;
+              const street = addressComponent.township || 
+                           addressComponent.town || 
+                           addressComponent.streetNumber.street ||
+                           response.regeocode.formatted_address.split(district)[1] || 
+                           "-";
+              
+              // 更新街道信息
+              $(".info-row").each(function() {
+                if ($(this).find(".info-label").text().trim() === "街道:") {
+                  $(this).find(".info-value").text(street);
+                }
+              });
+            }
+          },
+          error: function() {
+            // 如果获取失败，将街道显示为"-"
+            $(".info-row").each(function() {
+              if ($(this).find(".info-label").text().trim() === "街道:") {
+                $(this).find(".info-value").text("-");
+              }
+            });
+          }
+        });
       }
 
       function fetchIPInfo(ip) {
@@ -256,29 +299,25 @@
           },
           success: function (baiduResponse) {
             if (baiduResponse.code === "Success") {
-              // 然后获取ipinfo.io的补充数据
+              // 获取hstz-api的经纬度数据
               $.ajax({
-                url: `https://ipinfo.io/${ip}/json`,
+                url: `https://hstz-api.hf.space/${ip}`,
                 method: "GET",
                 dataType: "json",
-                success: function (ipinfoResponse) {
+                success: function (hstzResponse) {
                   const data = { ...baiduResponse.data };
-                  // 只更新这几个特定的值
-                  if (ipinfoResponse) {
-                    data.timezone = ipinfoResponse.timezone || data.timezone;
-                    data.accuracy = ipinfoResponse.loc ? "高精度" : "低精度";
-                    data.areacode = ipinfoResponse.region || data.areacode;
-                    data.asnumber = ipinfoResponse.org ? ipinfoResponse.org.split(" ")[0] : data.asnumber;
-                    if (ipinfoResponse.loc) {
-                      const [lat, lon] = ipinfoResponse.loc.split(",");
-                      data.lat = lat || data.lat;
-                      data.lng = lon || data.lng;
-                    }
+                  if (hstzResponse && hstzResponse.data) {
+                    data.timezone = hstzResponse.data.timezone || data.timezone;
+                    data.accuracy = hstzResponse.data.latitude ? "高精度" : "低精度";
+                    data.areacode = data.prov + data.city;
+                    data.asnumber = hstzResponse.data.asn || data.asnumber;
+                    data.lat = hstzResponse.data.latitude || data.lat;
+                    data.lng = hstzResponse.data.longitude || data.lng;
                   }
                   displayResult(ip, data);
                 },
                 error: function () {
-                  // 如果ipinfo.io获取失败，仍然显示百度API的数据
+                  // 如果hstz-api获取失败，仍然显示百度API的数据
                   displayResult(ip, baiduResponse.data);
                 }
               });
