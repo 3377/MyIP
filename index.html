@@ -220,7 +220,6 @@
         content += createInfoItem("精度", info.accuracy);
         content += createInfoItem("所有者", info.owner);
         content += createInfoItem("ISP", info.isp);
-        content += createInfoItem("来源", info.source);
         content += createInfoItem("地区码", info.areacode);
         content += createInfoItem("行政码", info.adcode);
         content += createInfoItem("ASN号", info.asnumber);
@@ -246,20 +245,43 @@
       }
 
       function fetchIPInfo(ip) {
-        var url = "https://qifu-api.baidubce.com/ip/geo/v1/district?ip=" + ip;
+        // 首先获取百度API的数据
+        var baiduUrl = "https://qifu-api.baidubce.com/ip/geo/v1/district?ip=" + ip;
         $.ajax({
-          url: url,
+          url: baiduUrl,
           method: "GET",
           dataType: "json",
           headers: {
             Accept: "application/json",
           },
-          success: function (response) {
-            if (response.code === "Success") {
-              displayResult(ip, response.data);
+          success: function (baiduResponse) {
+            if (baiduResponse.code === "Success") {
+              // 然后获取ip-api.com的补充数据
+              $.ajax({
+                url: `http://ip-api.com/json/${ip}?fields=status,message,timezone,region,as,lat,lon`,
+                method: "GET",
+                dataType: "json",
+                success: function (ipApiResponse) {
+                  const data = { ...baiduResponse.data };
+                  // 只更新这几个特定的值
+                  if (ipApiResponse.status === "success") {
+                    data.timezone = ipApiResponse.timezone || data.timezone;
+                    data.accuracy = ipApiResponse.lat ? "高精度" : "低精度";
+                    data.areacode = ipApiResponse.region || data.areacode;
+                    data.asnumber = ipApiResponse.as ? ipApiResponse.as.split(" ")[0] : data.asnumber;
+                    data.lat = ipApiResponse.lat || data.lat;
+                    data.lng = ipApiResponse.lon || data.lng;
+                  }
+                  displayResult(ip, data);
+                },
+                error: function () {
+                  // 如果ip-api.com获取失败，仍然显示百度API的数据
+                  displayResult(ip, baiduResponse.data);
+                }
+              });
             } else {
               $("#result").html(
-                "查询失败: " + (response.message || "未知错误")
+                "查询失败: " + (baiduResponse.message || "未知错误")
               );
             }
           },
