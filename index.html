@@ -256,26 +256,29 @@
           },
           success: function (baiduResponse) {
             if (baiduResponse.code === "Success") {
-              // 然后获取ip-api.com的补充数据
+              // 然后获取ipinfo.io的补充数据
               $.ajax({
-                url: `https://ip-api.com/json/${ip}?fields=status,message,timezone,region,as,lat,lon`,
+                url: `https://ipinfo.io/${ip}/json`,
                 method: "GET",
                 dataType: "json",
-                success: function (ipApiResponse) {
+                success: function (ipinfoResponse) {
                   const data = { ...baiduResponse.data };
                   // 只更新这几个特定的值
-                  if (ipApiResponse.status === "success") {
-                    data.timezone = ipApiResponse.timezone || data.timezone;
-                    data.accuracy = ipApiResponse.lat ? "高精度" : "低精度";
-                    data.areacode = ipApiResponse.region || data.areacode;
-                    data.asnumber = ipApiResponse.as ? ipApiResponse.as.split(" ")[0] : data.asnumber;
-                    data.lat = ipApiResponse.lat || data.lat;
-                    data.lng = ipApiResponse.lon || data.lng;
+                  if (ipinfoResponse) {
+                    data.timezone = ipinfoResponse.timezone || data.timezone;
+                    data.accuracy = ipinfoResponse.loc ? "高精度" : "低精度";
+                    data.areacode = ipinfoResponse.region || data.areacode;
+                    data.asnumber = ipinfoResponse.org ? ipinfoResponse.org.split(" ")[0] : data.asnumber;
+                    if (ipinfoResponse.loc) {
+                      const [lat, lon] = ipinfoResponse.loc.split(",");
+                      data.lat = lat || data.lat;
+                      data.lng = lon || data.lng;
+                    }
                   }
                   displayResult(ip, data);
                 },
                 error: function () {
-                  // 如果ip-api.com获取失败，仍然显示百度API的数据
+                  // 如果ipinfo.io获取失败，仍然显示百度API的数据
                   displayResult(ip, baiduResponse.data);
                 }
               });
