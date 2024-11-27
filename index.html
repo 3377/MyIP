@@ -258,7 +258,7 @@
             if (baiduResponse.code === "Success") {
               // 然后获取ip-api.com的补充数据
               $.ajax({
-                url: `http://ip-api.com/json/${ip}?fields=status,message,timezone,region,as,lat,lon`,
+                url: `https://ip-api.com/json/${ip}?fields=status,message,timezone,region,as,lat,lon`,
                 method: "GET",
                 dataType: "json",
                 success: function (ipApiResponse) {
