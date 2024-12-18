@@ -467,49 +467,120 @@
                 accuracy: "-",
               };
 
-              // 创建script标签获取美团经纬度数据
-              const script = document.createElement("script");
-              const callbackName =
-                "mtCallback_" + Math.random().toString(36).substr(2, 9);
+              // 使用jQuery的JSONP方式获取美团经纬度数据
+              $.ajax({
+                url: `https://apimobile.meituan.com/locate/v2/ip/loc`,
+                method: "GET",
+                dataType: "jsonp",
+                data: {
+                  ip: ip,
+                },
+                jsonp: "callback",
+                success: function (meituanResponse) {
+                  console.log("美团经纬度API返回:", meituanResponse);
+                  if (meituanResponse && meituanResponse.data) {
+                    data.lat = meituanResponse.data.lat?.toFixed(6) || "-";
+                    data.lng = meituanResponse.data.lng?.toFixed(6) || "-";
+                    data.accuracy =
+                      data.lat !== "-" && data.lng !== "-"
+                        ? "高精度"
+                        : "低精度";
+                  }
 
-              window[callbackName] = function (meituanResponse) {
-                if (meituanResponse && meituanResponse.data) {
-                  data.lat = meituanResponse.data.lat?.toFixed(6) || "-";
-                  data.lng = meituanResponse.data.lng?.toFixed(6) || "-";
-                  data.accuracy =
-                    data.lat !== "-" && data.lng !== "-" ? "高精度" : "低精度";
-                }
+                  displayResult(ip, data);
 
-                displayResult(ip, data);
+                  // 如果有经纬度信息，获取详细地址
+                  if (data.lat !== "-" && data.lng !== "-") {
+                    // 获取第一个街道信息
+                    $.ajax({
+                      url: `https://apimobile.meituan.com/group/v1/city/latlng/${data.lng},${data.lat}`,
+                      method: "GET",
+                      dataType: "jsonp",
+                      data: {
+                        tag: 0,
+                      },
+                      jsonp: "callback",
+                      success: function (response) {
+                        console.log("美团街道API(tag=0)返回:", response);
+                        if (response && response.data) {
+                          const street =
+                            response.data.areaName && response.data.detail
+                              ? `${response.data.areaName}(${response.data.detail})`
+                              : response.data.areaName ||
+                                response.data.detail ||
+                                "-";
 
-                // 如果有经纬度信息，获取详细地址
-                if (data.lat !== "-" && data.lng !== "-") {
-                  fetchDetailedAddress(
-                    data.lng,
-                    data.lat,
-                    data.prov,
-                    data.city,
-                    data.district,
-                    ip
-                  );
-                }
+                          $(".info-row").each(function () {
+                            if (
+                              $(this).find(".info-label").text().trim() ===
+                              "街道(一):"
+                            ) {
+                              $(this).find(".info-value").text(street);
+                            }
+                          });
+                        }
+                      },
+                      error: function (xhr, status, error) {
+                        console.log("美团街道API(tag=0)错误:", error);
+                        $(".info-row").each(function () {
+                          if (
+                            $(this).find(".info-label").text().trim() ===
+                            "街道(一):"
+                          ) {
+                            $(this).find(".info-value").text("-");
+                          }
+                        });
+                      },
+                    });
 
-                // 清理回调函数和script标签
-                delete window[callbackName];
-                document.body.removeChild(script);
-              };
+                    // 获取第二个街道信息
+                    $.ajax({
+                      url: `https://apimobile.meituan.com/group/v1/city/latlng/${data.lng},${data.lat}`,
+                      method: "GET",
+                      dataType: "jsonp",
+                      data: {
+                        tag: 1,
+                      },
+                      jsonp: "callback",
+                      success: function (response) {
+                        console.log("美团街道API(tag=1)返回:", response);
+                        if (response && response.data) {
+                          const street =
+                            response.data.areaName && response.data.detail
+                              ? `${response.data.areaName}(${response.data.detail})`
+                              : response.data.areaName ||
+                                response.data.detail ||
+                                "-";
 
-              script.onerror = function () {
-                console.log("美团经纬度API加载失败");
-                displayResult(ip, data);
-                if (script.parentNode) {
-                  document.body.removeChild(script);
-                }
-                delete window[callbackName];
-              };
-
-              script.src = `https://apimobile.meituan.com/locate/v2/ip/loc?ip=${ip}&callback=${callbackName}`;
-              document.body.appendChild(script);
+                          $(".info-row").each(function () {
+                            if (
+                              $(this).find(".info-label").text().trim() ===
+                              "街道(二):"
+                            ) {
+                              $(this).find(".info-value").text(street);
+                            }
+                          });
+                        }
+                      },
+                      error: function (xhr, status, error) {
+                        console.log("美团街道API(tag=1)错误:", error);
+                        $(".info-row").each(function () {
+                          if (
+                            $(this).find(".info-label").text().trim() ===
+                            "街道(二):"
+                          ) {
+                            $(this).find(".info-value").text("-");
+                          }
+                        });
+                      },
+                    });
+                  }
+                },
+                error: function (xhr, status, error) {
+                  console.log("美团经纬度API错误:", error);
+                  displayResult(ip, data);
+                },
+              });
             } else {
               $("#result").html(
                 "查询失败: " + (baiduResponse.message || "未知错误")
