@@ -348,7 +348,66 @@
         document.body.appendChild(script2);
       }
 
+      function fetchPublicIP() {
+        // 添加超时处理
+        const timeout = setTimeout(function () {
+          $("#result").html("获取IP超时，请刷新重试。");
+        }, 10000);
+
+        $.ajax({
+          url: "https://ipv4_cm.itdog.cn",
+          method: "GET",
+          dataType: "json",
+          success: function (data) {
+            clearTimeout(timeout);
+            if (data && data.type === "success" && data.ip) {
+              console.log("获取到IP:", data.ip); // 添加调试日志
+              fetchIPInfo(data.ip);
+            } else {
+              // 如果itdog接口失败，尝试使用备用接口
+              $.getJSON(
+                "https://api.ipify.org?format=json",
+                function (backupData) {
+                  if (backupData && backupData.ip) {
+                    console.log("使用备用接口获取IP:", backupData.ip); // 添加调试日志
+                    fetchIPInfo(backupData.ip);
+                  } else {
+                    $("#result").html("无法获取公网IP地址。");
+                  }
+                }
+              ).fail(function () {
+                $("#result").html("无法获取公网IP地址。");
+              });
+            }
+          },
+          error: function (xhr, status, error) {
+            clearTimeout(timeout);
+            console.log("IP获取错误:", error); // 添加调试日志
+            // 主接口失败时使用备用接口
+            $.getJSON(
+              "https://api.ipify.org?format=json",
+              function (backupData) {
+                if (backupData && backupData.ip) {
+                  console.log("使用备用接口获取IP:", backupData.ip); // 添加调试日志
+                  fetchIPInfo(backupData.ip);
+                } else {
+                  $("#result").html("无法获取公网IP地址。");
+                }
+              }
+            ).fail(function () {
+              $("#result").html("无法获取公网IP地址。");
+            });
+          },
+        });
+      }
+
       function fetchIPInfo(ip) {
+        if (!ip) {
+          $("#result").html("IP地址无效。");
+          return;
+        }
+
+        console.log("开始获取IP信息:", ip); // 添加调试日志
         // 存储当前查询的IP
         window.currentQueryIP = ip;
 
@@ -361,6 +420,7 @@
             Accept: "application/json",
           },
           success: function (baiduResponse) {
+            console.log("百度API返回:", baiduResponse); // 添加调试日志
             if (baiduResponse.code === "Success") {
               // 确保这是最新的查询
               if (window.currentQueryIP !== ip) {
@@ -371,7 +431,41 @@
               const script = document.createElement("script");
               const callbackName =
                 "mtCallback_" + Math.random().toString(36).substr(2, 9);
+
+              // 添加超时处理
+              const meituanTimeout = setTimeout(function () {
+                console.log("美团API超时"); // 添加调试日志
+                // 如果美团API超时，仍然显示百度的数据
+                const data = {
+                  continent: baiduResponse.data.continent || "亚洲",
+                  country: baiduResponse.data.country || "中国",
+                  zipcode: baiduResponse.data.zipcode || "-",
+                  owner: baiduResponse.data.owner || "-",
+                  isp: baiduResponse.data.isp || "-",
+                  adcode: baiduResponse.data.adcode || "-",
+                  prov: baiduResponse.data.prov || "-",
+                  city: baiduResponse.data.city || "-",
+                  district: baiduResponse.data.district || "-",
+                  areacode: "-",
+                  asnumber: "-",
+                  lat: "-",
+                  lng: "-",
+                  accuracy: "-",
+                };
+                displayResult(ip, data);
+
+                // 清理回调和script标签
+                if (window[callbackName]) {
+                  delete window[callbackName];
+                }
+                if (script.parentNode) {
+                  document.body.removeChild(script);
+                }
+              }, 5000);
+
               window[callbackName] = function (meituanResponse) {
+                clearTimeout(meituanTimeout);
+                console.log("美团API返回:", meituanResponse); // 添加调试日志
                 // 再次确保这是最新的查询
                 if (window.currentQueryIP !== ip) {
                   return;
@@ -423,6 +517,29 @@
                 document.body.removeChild(script);
               };
 
+              script.onerror = function () {
+                clearTimeout(meituanTimeout);
+                console.log("美团API加载失败"); // 添加调试日志
+                // 如果script加载失败，显示百度的数据
+                const data = {
+                  continent: baiduResponse.data.continent || "亚洲",
+                  country: baiduResponse.data.country || "中国",
+                  zipcode: baiduResponse.data.zipcode || "-",
+                  owner: baiduResponse.data.owner || "-",
+                  isp: baiduResponse.data.isp || "-",
+                  adcode: baiduResponse.data.adcode || "-",
+                  prov: baiduResponse.data.prov || "-",
+                  city: baiduResponse.data.city || "-",
+                  district: baiduResponse.data.district || "-",
+                  areacode: "-",
+                  asnumber: "-",
+                  lat: "-",
+                  lng: "-",
+                  accuracy: "-",
+                };
+                displayResult(ip, data);
+              };
+
               script.src = `https://apimobile.meituan.com/locate/v2/ip/loc?ip=${ip}&callback=${callbackName}`;
               document.body.appendChild(script);
             } else {
@@ -433,7 +550,8 @@
               }
             }
           },
-          error: function () {
+          error: function (xhr, status, error) {
+            console.log("百度API错误:", error); // 添加调试日志
             if (window.currentQueryIP === ip) {
               $("#result").html("查询失败，无法连到服务器。");
             }
@@ -462,24 +580,6 @@
         $("#searchBox").slideUp(200);
         $("#ipInput").val("");
         fetchIPInfo(ip);
-      }
-
-      function fetchPublicIP() {
-        $.ajax({
-          url: "https://ipv4_cm.itdog.cn",
-          method: "GET",
-          dataType: "json",
-          success: function (data) {
-            if (data.type === "success") {
-              fetchIPInfo(data.ip);
-            } else {
-              $("#result").html("无法获取公网IP地址。");
-            }
-          },
-          error: function () {
-            $("#result").html("无法获取公网IP地址。");
-          },
-        });
       }
 
       // 3. 最后是 document ready 事件
@@ -520,7 +620,7 @@
 
           // 判断是否为夏令时
           function isDST() {
-            // 美国夏令时：3月第二个周日开始，11月第一个周日结束
+            // 美国夏令时：3月第二个周日开始，11月第一个��日结束
             const today = new Date();
             const year = today.getFullYear();
             const march = new Date(year, 2, 1);
@@ -557,7 +657,7 @@
           if (window.innerWidth <= 768) {
             return `${month}-${day} ${hours}:${minutes}:${seconds}`;
           }
-          // 桌面端保持完整格式
+          // 桌面端保持完��格式
           return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
         }
 
