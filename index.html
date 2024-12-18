@@ -251,18 +251,6 @@
         $("#result").html(content);
         loadBusuanziScript();
 
-        // 如果有经纬度信息，获取详细地址
-        if (info.lat && info.lng) {
-          fetchDetailedAddress(
-            info.lng,
-            info.lat,
-            info.prov,
-            info.city,
-            info.district,
-            ip
-          );
-        }
-
         // 更新时间显示
         if (info.timezone) {
           if (window.timeInterval) {
