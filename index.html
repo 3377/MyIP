@@ -234,8 +234,8 @@
         content += createInfoItem("省份", info.prov || "-");
         content += createInfoItem("城市", info.city || "-");
         content += createInfoItem("区县", info.district || "-");
-        content += createInfoItem("街道(一)", "正在获取...");
-        content += createInfoItem("街道(二)", "正在获取...");
+        content += createInfoItem("位置A", "正在获取...");
+        content += createInfoItem("位置B", "正在获取...");
         content += createInfoItem("北京时间", '<span id="beijingTime"></span>');
         content += createInfoItem("UTC时间", '<span id="utcTime"></span>');
         content += createInfoItem("美东时间", '<span id="usTime"></span>');
@@ -277,7 +277,7 @@
               console.log("获取到IP:", data.ip); // 添加调试日志
               fetchIPInfo(data.ip);
             } else {
-              // 如果itdog接口失败，尝试使用备���接口
+              // 如果itdog接口失败，尝试使用备用接口
               $.getJSON(
                 "https://api.ipify.org?format=json",
                 function (backupData) {
@@ -336,7 +336,7 @@
             console.log("百度API返回:", baiduResponse);
             if (baiduResponse.code === "Success") {
               // 构造基础数据
-              const data = {
+              const baseData = {
                 continent: baiduResponse.data.continent || "亚洲",
                 country: baiduResponse.data.country || "中国",
                 zipcode: baiduResponse.data.zipcode || "-",
@@ -364,98 +364,89 @@
 
               fetch(proxyUrl + targetUrl)
                 .then((response) => response.json())
-                .then((data) => {
-                  console.log("美团经纬度API返回:", data);
+                .then((mtData) => {
+                  console.log("美团经纬度API返回:", mtData);
                   try {
-                    const mtResponse = JSON.parse(data.contents);
+                    const mtResponse = JSON.parse(mtData.contents);
                     if (mtResponse && mtResponse.data) {
-                      data.lat = mtResponse.data.lat?.toFixed(6) || "-";
-                      data.lng = mtResponse.data.lng?.toFixed(6) || "-";
-                      data.accuracy =
-                        data.lat !== "-" && data.lng !== "-"
+                      baseData.lat = mtResponse.data.lat?.toFixed(6) || "-";
+                      baseData.lng = mtResponse.data.lng?.toFixed(6) || "-";
+                      baseData.accuracy =
+                        baseData.lat !== "-" && baseData.lng !== "-"
                           ? "高精度"
                           : "低精度";
-
-                      // 显示基本数据
-                      displayResult(ip, data);
-
-                      // 如果有经纬度信息，获取街道信息
-                      if (data.lat !== "-" && data.lng !== "-") {
-                        // 获取第一个街道信息
-                        const streetScript1 = document.createElement("script");
-                        const streetCallback1 = "streetCallback1_" + Date.now();
-                        window[streetCallback1] = function (streetResponse) {
-                          console.log(
-                            "美团街道API(tag=0)返回:",
-                            streetResponse
-                          );
-                          if (streetResponse && streetResponse.data) {
-                            const street =
-                              streetResponse.data.areaName &&
-                              streetResponse.data.detail
-                                ? `${streetResponse.data.areaName}(${streetResponse.data.detail})`
-                                : streetResponse.data.areaName ||
-                                  streetResponse.data.detail ||
-                                  "-";
-
-                            $(".info-row").each(function () {
-                              if (
-                                $(this).find(".info-label").text().trim() ===
-                                "街道(一):"
-                              ) {
-                                $(this).find(".info-value").text(street);
-                              }
-                            });
-                          }
-                          document.body.removeChild(streetScript1);
-                          delete window[streetCallback1];
-                        };
-                        streetScript1.src = `https://apimobile.meituan.com/group/v1/city/latlng/${data.lat},${data.lng}?tag=0&callback=${streetCallback1}`;
-                        document.body.appendChild(streetScript1);
-
-                        // 获取第二个街道信息
-                        const streetScript2 = document.createElement("script");
-                        const streetCallback2 = "streetCallback2_" + Date.now();
-                        window[streetCallback2] = function (streetResponse) {
-                          console.log(
-                            "美团街道API(tag=1)返回:",
-                            streetResponse
-                          );
-                          if (streetResponse && streetResponse.data) {
-                            const street =
-                              streetResponse.data.areaName &&
-                              streetResponse.data.detail
-                                ? `${streetResponse.data.areaName}(${streetResponse.data.detail})`
-                                : streetResponse.data.areaName ||
-                                  streetResponse.data.detail ||
-                                  "-";
-
-                            $(".info-row").each(function () {
-                              if (
-                                $(this).find(".info-label").text().trim() ===
-                                "街道(二):"
-                              ) {
-                                $(this).find(".info-value").text(street);
-                              }
-                            });
-                          }
-                          document.body.removeChild(streetScript2);
-                          delete window[streetCallback2];
-                        };
-                        streetScript2.src = `https://apimobile.meituan.com/group/v1/city/latlng/${data.lat},${data.lng}?tag=1&callback=${streetCallback2}`;
-                        document.body.appendChild(streetScript2);
-                      }
-                    } else {
-                      displayResult(ip, data);
                     }
                   } catch (e) {
                     console.log("解析美团API返回数据失败:", e);
-                    displayResult(ip, data);
+                  }
+
+                  // 显示基本数据
+                  displayResult(ip, baseData);
+
+                  // 如果有经纬度信息，获取街道信息
+                  if (baseData.lat !== "-" && baseData.lng !== "-") {
+                    // 获取第一个街道信息
+                    const streetScript1 = document.createElement("script");
+                    const streetCallback1 = "streetCallback1_" + Date.now();
+                    window[streetCallback1] = function (streetResponse) {
+                      console.log("美团街道API(tag=0)返回:", streetResponse);
+                      if (streetResponse && streetResponse.data) {
+                        const street =
+                          streetResponse.data.areaName &&
+                          streetResponse.data.detail
+                            ? `${streetResponse.data.areaName}-${streetResponse.data.detail}`
+                            : streetResponse.data.areaName ||
+                              streetResponse.data.detail ||
+                              "-";
+
+                        $(".info-row").each(function () {
+                          if (
+                            $(this).find(".info-label").text().trim() ===
+                            "位置A:"
+                          ) {
+                            $(this).find(".info-value").text(street);
+                          }
+                        });
+                      }
+                      document.body.removeChild(streetScript1);
+                      delete window[streetCallback1];
+                    };
+                    streetScript1.src = `https://apimobile.meituan.com/group/v1/city/latlng/${baseData.lat},${baseData.lng}?tag=0&callback=${streetCallback1}`;
+                    document.body.appendChild(streetScript1);
+
+                    // 获取第二个街道信息
+                    const streetScript2 = document.createElement("script");
+                    const streetCallback2 = "streetCallback2_" + Date.now();
+                    window[streetCallback2] = function (streetResponse) {
+                      console.log("美团街道API(tag=1)返回:", streetResponse);
+                      if (streetResponse && streetResponse.data) {
+                        const street =
+                          streetResponse.data.areaName &&
+                          streetResponse.data.detail
+                            ? `${streetResponse.data.areaName}-${streetResponse.data.detail}`
+                            : streetResponse.data.areaName ||
+                              streetResponse.data.detail ||
+                              "-";
+
+                        $(".info-row").each(function () {
+                          if (
+                            $(this).find(".info-label").text().trim() ===
+                            "位置B:"
+                          ) {
+                            $(this).find(".info-value").text(street);
+                          }
+                        });
+                      }
+                      document.body.removeChild(streetScript2);
+                      delete window[streetCallback2];
+                    };
+                    streetScript2.src = `https://apimobile.meituan.com/group/v1/city/latlng/${baseData.lat},${baseData.lng}?tag=1&callback=${streetCallback2}`;
+                    document.body.appendChild(streetScript2);
                   }
                 })
                 .catch((error) => {
                   console.log("美团经纬度API请求失败:", error);
-                  displayResult(ip, data);
+                  displayResult(ip, baseData);
                 });
             } else {
               $("#result").html(
@@ -620,7 +611,7 @@
             const tooltip = $(".ip-value .copy-tooltip");
             tooltip.fadeIn(200);
 
-            // 1.5秒���隐藏提示
+            // 1.5秒后隐藏提示
             setTimeout(() => {
               tooltip.fadeOut(200);
             }, 1500);
