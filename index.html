@@ -435,114 +435,92 @@
         // 存储当前查询的IP
         window.currentQueryIP = ip;
 
-        // 首先获取美团的经纬度数据
-        const script = document.createElement("script");
-        const callbackName =
-          "mtCallback_" + Math.random().toString(36).substr(2, 9);
+        // 首先获取百度API的数据
+        $.ajax({
+          url: "https://qifu-api.baidubce.com/ip/geo/v1/district?ip=" + ip,
+          method: "GET",
+          dataType: "json",
+          headers: {
+            Accept: "application/json",
+          },
+          success: function (baiduResponse) {
+            console.log("百度API返回:", baiduResponse);
+            if (baiduResponse.code === "Success") {
+              // 构造基础数据
+              const data = {
+                continent: baiduResponse.data.continent || "亚洲",
+                country: baiduResponse.data.country || "中国",
+                zipcode: baiduResponse.data.zipcode || "-",
+                owner: baiduResponse.data.owner || "-",
+                isp: baiduResponse.data.isp || "-",
+                adcode: baiduResponse.data.adcode || "-",
+                prov: baiduResponse.data.prov || "-",
+                city: baiduResponse.data.city || "-",
+                district: baiduResponse.data.district || "-",
+                areacode:
+                  baiduResponse.data.prov && baiduResponse.data.city
+                    ? `${baiduResponse.data.prov}${baiduResponse.data.city}`
+                    : "-",
+                asnumber: "-",
+                lat: "-",
+                lng: "-",
+                accuracy: "-",
+              };
 
-        window[callbackName] = function (meituanResponse) {
-          console.log("美团API返回:", meituanResponse);
-          if (meituanResponse && meituanResponse.data) {
-            // 获取到经纬度后，获取百度API的数据
-            $.ajax({
-              url: "https://qifu-api.baidubce.com/ip/geo/v1/district?ip=" + ip,
-              method: "GET",
-              dataType: "json",
-              headers: {
-                Accept: "application/json",
-              },
-              success: function (baiduResponse) {
-                console.log("百度API返回:", baiduResponse);
-                if (baiduResponse.code === "Success") {
-                  const data = {
-                    continent: baiduResponse.data.continent || "亚洲",
-                    country: baiduResponse.data.country || "中国",
-                    zipcode: baiduResponse.data.zipcode || "-",
-                    owner: baiduResponse.data.owner || "-",
-                    isp: baiduResponse.data.isp || "-",
-                    adcode: baiduResponse.data.adcode || "-",
-                    prov: baiduResponse.data.prov || "-",
-                    city: baiduResponse.data.city || "-",
-                    district: baiduResponse.data.district || "-",
-                    areacode:
-                      baiduResponse.data.prov && baiduResponse.data.city
-                        ? `${baiduResponse.data.prov}${baiduResponse.data.city}`
-                        : "-",
-                    asnumber: "-",
-                    lat: meituanResponse.data.lat?.toFixed(6) || "-",
-                    lng: meituanResponse.data.lng?.toFixed(6) || "-",
-                    accuracy: "高精度",
-                  };
+              // 创建script标签获取美团经纬度数据
+              const script = document.createElement("script");
+              const callbackName =
+                "mtCallback_" + Math.random().toString(36).substr(2, 9);
 
-                  displayResult(ip, data);
-
-                  // 获取详细地址
-                  if (data.lat !== "-" && data.lng !== "-") {
-                    fetchDetailedAddress(
-                      data.lng,
-                      data.lat,
-                      data.prov,
-                      data.city,
-                      data.district,
-                      ip
-                    );
-                  }
+              window[callbackName] = function (meituanResponse) {
+                if (meituanResponse && meituanResponse.data) {
+                  data.lat = meituanResponse.data.lat?.toFixed(6) || "-";
+                  data.lng = meituanResponse.data.lng?.toFixed(6) || "-";
+                  data.accuracy =
+                    data.lat !== "-" && data.lng !== "-" ? "高精度" : "低精度";
                 }
-              },
-              error: function (xhr, status, error) {
-                console.log("百度API错误:", error);
-                $("#result").html("查询失败，无法连到服务器。");
-              },
-            });
-          }
-          // 清理回调函数
-          delete window[callbackName];
-          document.body.removeChild(script);
-        };
 
-        script.onerror = function () {
-          console.log("美团API加载失败");
-          // 如果美团API失败，尝试只使用百度API
-          $.ajax({
-            url: "https://qifu-api.baidubce.com/ip/geo/v1/district?ip=" + ip,
-            method: "GET",
-            dataType: "json",
-            headers: {
-              Accept: "application/json",
-            },
-            success: function (baiduResponse) {
-              if (baiduResponse.code === "Success") {
-                const data = {
-                  continent: baiduResponse.data.continent || "亚洲",
-                  country: baiduResponse.data.country || "中国",
-                  zipcode: baiduResponse.data.zipcode || "-",
-                  owner: baiduResponse.data.owner || "-",
-                  isp: baiduResponse.data.isp || "-",
-                  adcode: baiduResponse.data.adcode || "-",
-                  prov: baiduResponse.data.prov || "-",
-                  city: baiduResponse.data.city || "-",
-                  district: baiduResponse.data.district || "-",
-                  areacode:
-                    baiduResponse.data.prov && baiduResponse.data.city
-                      ? `${baiduResponse.data.prov}${baiduResponse.data.city}`
-                      : "-",
-                  asnumber: "-",
-                  lat: "-",
-                  lng: "-",
-                  accuracy: "-",
-                };
                 displayResult(ip, data);
-              }
-            },
-          });
-          delete window[callbackName];
-          if (script.parentNode) {
-            document.body.removeChild(script);
-          }
-        };
 
-        script.src = `https://apimobile.meituan.com/locate/v2/ip/loc?ip=${ip}&callback=${callbackName}`;
-        document.body.appendChild(script);
+                // 如果有经纬度信息，获取详细地址
+                if (data.lat !== "-" && data.lng !== "-") {
+                  fetchDetailedAddress(
+                    data.lng,
+                    data.lat,
+                    data.prov,
+                    data.city,
+                    data.district,
+                    ip
+                  );
+                }
+
+                // 清理回调函数和script标签
+                delete window[callbackName];
+                document.body.removeChild(script);
+              };
+
+              script.onerror = function () {
+                console.log("美团经纬度API加载失败");
+                displayResult(ip, data);
+                if (script.parentNode) {
+                  document.body.removeChild(script);
+                }
+                delete window[callbackName];
+              };
+
+              script.src = `https://apimobile.meituan.com/locate/v2/ip/loc?ip=${ip}&callback=${callbackName}`;
+              document.body.appendChild(script);
+            } else {
+              $("#result").html(
+                "查询失败: " + (baiduResponse.message || "未知错误")
+              );
+            }
+          },
+          error: function (xhr, status, error) {
+            console.log("百度API错误:", error);
+            $("#result").html("查询失败，无法连到服务器。");
+          },
+        });
       }
 
       function executeIPQuery(ip) {
