@@ -311,7 +311,19 @@
           document.body.removeChild(script1);
         };
 
-        script1.src = `https://apimobile.meituan.com/group/v1/city/latlng/${lat},${lng}?tag=0&callback=${callbackName1}`;
+        script1.onerror = function () {
+          $(".info-row").each(function () {
+            if ($(this).find(".info-label").text().trim() === "街道(一):") {
+              $(this).find(".info-value").text("-");
+            }
+          });
+          delete window[callbackName1];
+          if (script1.parentNode) {
+            document.body.removeChild(script1);
+          }
+        };
+
+        script1.src = `https://apimobile.meituan.com/group/v1/city/latlng/${lng},${lat}?tag=0&callback=${callbackName1}`;
         document.body.appendChild(script1);
 
         // 获取第二个街道信息
@@ -344,7 +356,19 @@
           document.body.removeChild(script2);
         };
 
-        script2.src = `https://apimobile.meituan.com/group/v1/city/latlng/${lat},${lng}?tag=1&callback=${callbackName2}`;
+        script2.onerror = function () {
+          $(".info-row").each(function () {
+            if ($(this).find(".info-label").text().trim() === "街道(二):") {
+              $(this).find(".info-value").text("-");
+            }
+          });
+          delete window[callbackName2];
+          if (script2.parentNode) {
+            document.body.removeChild(script2);
+          }
+        };
+
+        script2.src = `https://apimobile.meituan.com/group/v1/city/latlng/${lng},${lat}?tag=1&callback=${callbackName2}`;
         document.body.appendChild(script2);
       }
 
@@ -407,156 +431,118 @@
           return;
         }
 
-        console.log("开始获取IP信息:", ip); // 添加调试日志
+        console.log("开始获取IP信息:", ip);
         // 存储当前查询的IP
         window.currentQueryIP = ip;
 
-        // 首先获取百度API的数据
-        $.ajax({
-          url: "https://qifu-api.baidubce.com/ip/geo/v1/district?ip=" + ip,
-          method: "GET",
-          dataType: "json",
-          headers: {
-            Accept: "application/json",
-          },
-          success: function (baiduResponse) {
-            console.log("百度API返回:", baiduResponse); // 添加调试日志
-            if (baiduResponse.code === "Success") {
-              // 确保这是最新的查询
-              if (window.currentQueryIP !== ip) {
-                return;
+        // 首先获取美团的经纬度数据
+        const script = document.createElement("script");
+        const callbackName =
+          "mtCallback_" + Math.random().toString(36).substr(2, 9);
+
+        window[callbackName] = function (meituanResponse) {
+          console.log("美团API返回:", meituanResponse);
+          if (meituanResponse && meituanResponse.data) {
+            // 获取到经纬度后，获取百度API的数据
+            $.ajax({
+              url: "https://qifu-api.baidubce.com/ip/geo/v1/district?ip=" + ip,
+              method: "GET",
+              dataType: "json",
+              headers: {
+                Accept: "application/json",
+              },
+              success: function (baiduResponse) {
+                console.log("百度API返回:", baiduResponse);
+                if (baiduResponse.code === "Success") {
+                  const data = {
+                    continent: baiduResponse.data.continent || "亚洲",
+                    country: baiduResponse.data.country || "中国",
+                    zipcode: baiduResponse.data.zipcode || "-",
+                    owner: baiduResponse.data.owner || "-",
+                    isp: baiduResponse.data.isp || "-",
+                    adcode: baiduResponse.data.adcode || "-",
+                    prov: baiduResponse.data.prov || "-",
+                    city: baiduResponse.data.city || "-",
+                    district: baiduResponse.data.district || "-",
+                    areacode:
+                      baiduResponse.data.prov && baiduResponse.data.city
+                        ? `${baiduResponse.data.prov}${baiduResponse.data.city}`
+                        : "-",
+                    asnumber: "-",
+                    lat: meituanResponse.data.lat?.toFixed(6) || "-",
+                    lng: meituanResponse.data.lng?.toFixed(6) || "-",
+                    accuracy: "高精度",
+                  };
+
+                  displayResult(ip, data);
+
+                  // 获取详细地址
+                  if (data.lat !== "-" && data.lng !== "-") {
+                    fetchDetailedAddress(
+                      data.lng,
+                      data.lat,
+                      data.prov,
+                      data.city,
+                      data.district,
+                      ip
+                    );
+                  }
+                }
+              },
+              error: function (xhr, status, error) {
+                console.log("百度API错误:", error);
+                $("#result").html("查询失败，无法连到服务器。");
+              },
+            });
+          }
+          // 清理回调函数
+          delete window[callbackName];
+          document.body.removeChild(script);
+        };
+
+        script.onerror = function () {
+          console.log("美团API加载失败");
+          // 如果美团API失败，尝试只使用百度API
+          $.ajax({
+            url: "https://qifu-api.baidubce.com/ip/geo/v1/district?ip=" + ip,
+            method: "GET",
+            dataType: "json",
+            headers: {
+              Accept: "application/json",
+            },
+            success: function (baiduResponse) {
+              if (baiduResponse.code === "Success") {
+                const data = {
+                  continent: baiduResponse.data.continent || "亚洲",
+                  country: baiduResponse.data.country || "中国",
+                  zipcode: baiduResponse.data.zipcode || "-",
+                  owner: baiduResponse.data.owner || "-",
+                  isp: baiduResponse.data.isp || "-",
+                  adcode: baiduResponse.data.adcode || "-",
+                  prov: baiduResponse.data.prov || "-",
+                  city: baiduResponse.data.city || "-",
+                  district: baiduResponse.data.district || "-",
+                  areacode:
+                    baiduResponse.data.prov && baiduResponse.data.city
+                      ? `${baiduResponse.data.prov}${baiduResponse.data.city}`
+                      : "-",
+                  asnumber: "-",
+                  lat: "-",
+                  lng: "-",
+                  accuracy: "-",
+                };
+                displayResult(ip, data);
               }
+            },
+          });
+          delete window[callbackName];
+          if (script.parentNode) {
+            document.body.removeChild(script);
+          }
+        };
 
-              // 构造美团经纬度API的script标签
-              const script = document.createElement("script");
-              const callbackName =
-                "mtCallback_" + Math.random().toString(36).substr(2, 9);
-
-              // 添加超时处理
-              const meituanTimeout = setTimeout(function () {
-                console.log("美团API超时"); // 添加调试日志
-                // 如果美团API超时，仍然显示百度的数据
-                const data = {
-                  continent: baiduResponse.data.continent || "亚洲",
-                  country: baiduResponse.data.country || "中国",
-                  zipcode: baiduResponse.data.zipcode || "-",
-                  owner: baiduResponse.data.owner || "-",
-                  isp: baiduResponse.data.isp || "-",
-                  adcode: baiduResponse.data.adcode || "-",
-                  prov: baiduResponse.data.prov || "-",
-                  city: baiduResponse.data.city || "-",
-                  district: baiduResponse.data.district || "-",
-                  areacode: "-",
-                  asnumber: "-",
-                  lat: "-",
-                  lng: "-",
-                  accuracy: "-",
-                };
-                displayResult(ip, data);
-
-                // 清理回调和script标签
-                if (window[callbackName]) {
-                  delete window[callbackName];
-                }
-                if (script.parentNode) {
-                  document.body.removeChild(script);
-                }
-              }, 5000);
-
-              window[callbackName] = function (meituanResponse) {
-                clearTimeout(meituanTimeout);
-                console.log("美团API返回:", meituanResponse); // 添加调试日志
-                // 再次确保这是最新的查询
-                if (window.currentQueryIP !== ip) {
-                  return;
-                }
-
-                const data = {
-                  continent: baiduResponse.data.continent || "亚洲",
-                  country: baiduResponse.data.country || "中国",
-                  zipcode: baiduResponse.data.zipcode || "-",
-                  owner: baiduResponse.data.owner || "-",
-                  isp: baiduResponse.data.isp || "-",
-                  adcode: baiduResponse.data.adcode || "-",
-                  prov: baiduResponse.data.prov || "-",
-                  city: baiduResponse.data.city || "-",
-                  district: baiduResponse.data.district || "-",
-                  areacode: "-",
-                  asnumber: "-",
-                  lat: "-",
-                  lng: "-",
-                  accuracy: "-",
-                };
-
-                // 使用美团的经纬度数据
-                if (meituanResponse && meituanResponse.data) {
-                  data.lat = meituanResponse.data.lat?.toFixed(6) || "-";
-                  data.lng = meituanResponse.data.lng?.toFixed(6) || "-";
-                  data.accuracy =
-                    data.lat !== "-" && data.lng !== "-" ? "高精度" : "低精度";
-                  data.areacode =
-                    data.prov && data.city ? `${data.prov}${data.city}` : "-";
-                }
-
-                displayResult(ip, data);
-
-                // 如果有经纬度信息，获取详细地址
-                if (data.lat !== "-" && data.lng !== "-") {
-                  fetchDetailedAddress(
-                    data.lng,
-                    data.lat,
-                    data.prov,
-                    data.city,
-                    data.district,
-                    ip
-                  );
-                }
-
-                // 清理回调函数
-                delete window[callbackName];
-                document.body.removeChild(script);
-              };
-
-              script.onerror = function () {
-                clearTimeout(meituanTimeout);
-                console.log("美团API加载失败"); // 添加调试日志
-                // 如果script加载失败，显示百度的数据
-                const data = {
-                  continent: baiduResponse.data.continent || "亚洲",
-                  country: baiduResponse.data.country || "中国",
-                  zipcode: baiduResponse.data.zipcode || "-",
-                  owner: baiduResponse.data.owner || "-",
-                  isp: baiduResponse.data.isp || "-",
-                  adcode: baiduResponse.data.adcode || "-",
-                  prov: baiduResponse.data.prov || "-",
-                  city: baiduResponse.data.city || "-",
-                  district: baiduResponse.data.district || "-",
-                  areacode: "-",
-                  asnumber: "-",
-                  lat: "-",
-                  lng: "-",
-                  accuracy: "-",
-                };
-                displayResult(ip, data);
-              };
-
-              script.src = `https://apimobile.meituan.com/locate/v2/ip/loc?ip=${ip}&callback=${callbackName}`;
-              document.body.appendChild(script);
-            } else {
-              if (window.currentQueryIP === ip) {
-                $("#result").html(
-                  "查询失败: " + (baiduResponse.message || "未知错误")
-                );
-              }
-            }
-          },
-          error: function (xhr, status, error) {
-            console.log("百度API错误:", error); // 添加调试日志
-            if (window.currentQueryIP === ip) {
-              $("#result").html("查询失败，无法连到服务器。");
-            }
-          },
-        });
+        script.src = `https://apimobile.meituan.com/locate/v2/ip/loc?ip=${ip}&callback=${callbackName}`;
+        document.body.appendChild(script);
       }
 
       function executeIPQuery(ip) {
@@ -620,7 +606,7 @@
 
           // 判断是否为夏令时
           function isDST() {
-            // 美国夏令时：3月第二个周日开始，11月第一个��日结束
+            // 美国夏令时：3月第二个周日开始，11月第一个周日结束
             const today = new Date();
             const year = today.getFullYear();
             const march = new Date(year, 2, 1);
@@ -657,7 +643,7 @@
           if (window.innerWidth <= 768) {
             return `${month}-${day} ${hours}:${minutes}:${seconds}`;
           }
-          // 桌面端保持完��格式
+          // 桌面端保持完整格式
           return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
         }
 
