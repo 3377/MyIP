@@ -199,11 +199,15 @@
       function createInfoItem(label, value) {
         // 如果value已经是HTML字符串（包含span标签），则直接使用
         if (typeof value === "string" && value.includes("<span")) {
+          const spanValue = value.replace(
+            "<span",
+            '<span class="info-value ip-value"'
+          );
           return (
             '<div class="info-row"><span class="info-label">' +
             label +
             ":</span>" +
-            value +
+            spanValue +
             "</div>"
           );
         }
@@ -211,9 +215,7 @@
         return (
           '<div class="info-row"><span class="info-label">' +
           label +
-          ':</span><span class="info-value ip-value" onclick="window.copyIP(\'' +
-          value +
-          "')\">" +
+          ':</span><span class="info-value ip-value" onclick="window.copyIP(this)">' +
           value +
           '<span class="copy-tooltip">已复制!</span></span></div>'
         );
@@ -227,7 +229,7 @@
         var content = "";
         content += createInfoItem(
           "您的IP",
-          `<span class="ip-value" onclick="window.copyIP('${ip}')">${ip}<span class="copy-tooltip">已复制!</span></span>`
+          `<span class="ip-value" onclick="window.copyIP(this)">${ip}<span class="copy-tooltip">已复制!</span></span>`
         );
         content += createInfoItem("洲别", info.continent || "-");
         content += createInfoItem("国家", info.country || "-");
@@ -511,7 +513,7 @@
           function update() {
             const now = new Date();
 
-            // 获取当前的UTC时间戳
+            // 获取当前���UTC时间戳
             const utcTime = now.getTime() + now.getTimezoneOffset() * 60000;
 
             // 北京时间 (UTC+8)
@@ -611,15 +613,13 @@
         }, 0);
       };
 
-      window.copyIP = function (ip) {
+      window.copyIP = function (element) {
+        const text = $(element).clone().children().remove().end().text();
         navigator.clipboard
-          .writeText(ip)
+          .writeText(text)
           .then(function () {
-            // 显示提示
-            const tooltip = $(".ip-value .copy-tooltip");
+            const tooltip = $(element).find(".copy-tooltip");
             tooltip.fadeIn(200);
-
-            // 1.5秒后隐藏提示
             setTimeout(() => {
               tooltip.fadeOut(200);
             }, 1500);
