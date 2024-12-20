@@ -197,12 +197,25 @@
       }
 
       function createInfoItem(label, value) {
+        // 如果value已经是HTML字符串（包含span标签），则直接使用
+        if (typeof value === "string" && value.includes("<span")) {
+          return (
+            '<div class="info-row"><span class="info-label">' +
+            label +
+            ":</span>" +
+            value +
+            "</div>"
+          );
+        }
+        // 否则，为value添加可点击复制功能
         return (
           '<div class="info-row"><span class="info-label">' +
           label +
-          ':</span><span class="info-value">' +
+          ':</span><span class="info-value ip-value" onclick="window.copyIP(\'' +
           value +
-          "</span></div>"
+          "')\">" +
+          value +
+          '<span class="copy-tooltip">已复制!</span></span></div>'
         );
       }
 
@@ -223,12 +236,7 @@
         content += createInfoItem("精度", info.accuracy || "-");
         content += createInfoItem("所有者", info.owner || "-");
         content += createInfoItem("ISP", info.isp || "-");
-        content += createInfoItem(
-          "地区码",
-          info.prov && info.city ? `${info.prov}${info.city}` : "-"
-        );
         content += createInfoItem("行政码", info.adcode || "-");
-        content += createInfoItem("ASN号", info.asnumber || "-");
         content += createInfoItem("纬度", info.lat || "-");
         content += createInfoItem("经度", info.lng || "-");
         content += createInfoItem("省份", info.prov || "-");
