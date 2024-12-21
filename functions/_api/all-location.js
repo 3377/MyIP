@@ -50,16 +50,8 @@ export async function onRequest(context) {
 
     // 4. 获取腾讯地图信息
     const tencentKey = context.env.TENCENT_MAP_KEY;
-    console.log('腾讯地图API密钥:', tencentKey);
-
-    // 调试信息对象
-    const debugInfo = {
-      key: tencentKey || '未获取到密钥',
-      env: Object.keys(context.env),  // 输出所有环境变量的键名
-    };
 
     if (!tencentKey) {
-      console.error('腾讯地图API密钥未配置');
       return new Response(JSON.stringify({
         success: true,
         lat,
@@ -69,8 +61,7 @@ export async function onRequest(context) {
           locationB,
           recommend: '腾讯地图API密钥未配置',
           standard_address: '腾讯地图API密钥未配置'
-        },
-        debug: debugInfo  // 添加调试信息
+        }
       }), {
         headers: {
           'Content-Type': 'application/json',
@@ -80,20 +71,10 @@ export async function onRequest(context) {
       });
     }
 
-    // 输出更多调试信息
-    console.log('准备调用腾讯地图API，参数:', {
-      lat,
-      lng,
-      key: tencentKey ? '已配置' : '未配置',
-      url: `https://apis.map.qq.com/ws/geocoder/v1/?location=${lat},${lng}&key=${tencentKey}&get_poi=0`
-    });
-
     const qqMapResponse = await fetch(
       `https://apis.map.qq.com/ws/geocoder/v1/?location=${lat},${lng}&key=${tencentKey}&get_poi=0`
     );
     const qqMapData = await qqMapResponse.json();
-
-    console.log('腾讯地图API返回:', qqMapData);
 
     // 5. 整合所有信息
     const locationA = mtStreet0Data.data ? 
@@ -125,7 +106,6 @@ export async function onRequest(context) {
       standard_address = '获取位置信息失败';
     }
 
-    // 在最终返回中也添加调试信息
     return new Response(JSON.stringify({
       success: true,
       lat,
@@ -135,10 +115,6 @@ export async function onRequest(context) {
         locationB,
         recommend,
         standard_address
-      },
-      debug: {
-        ...debugInfo,
-        qqMapResponse: qqMapData  // 添加腾讯地图API的返回结果
       }
     }), {
       headers: {
