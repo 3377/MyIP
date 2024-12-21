@@ -50,10 +50,33 @@ export async function onRequest(context) {
 
     // 4. 获取腾讯地图信息
     const tencentKey = context.env.TENCENT_MAP_KEY;
+    if (!tencentKey) {
+      console.error('腾讯地图API密钥未配置');
+      return new Response(JSON.stringify({
+        success: true,
+        lat,
+        lng,
+        locations: {
+          locationA,
+          locationB,
+          recommend: '腾讯地图API密钥未配置',
+          standard_address: '腾讯地图API密钥未配置'
+        }
+      }), {
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-store',
+          'Access-Control-Allow-Origin': '*'
+        }
+      });
+    }
+
     const qqMapResponse = await fetch(
-      `https://apis.map.qq.com/ws/geocoder/v1/?location=${lat},${lng}&key=${tencentKey}`
+      `https://apis.map.qq.com/ws/geocoder/v1/?location=${lat},${lng}&key=${tencentKey}&get_poi=0`
     );
     const qqMapData = await qqMapResponse.json();
+
+    console.log('腾讯地图API返回:', qqMapData);
 
     // 5. 整合所有信息
     const locationA = mtStreet0Data.data ? 
@@ -72,10 +95,17 @@ export async function onRequest(context) {
     let standard_address = '-';
 
     if (qqMapData.status === 0 && qqMapData.result) {
-      recommend = qqMapData.result.formatted_addresses?.recommend || qqMapData.result.address || '-';
+      recommend = qqMapData.result.formatted_addresses?.recommend || 
+                  qqMapData.result.formatted_addresses?.rough || 
+                  qqMapData.result.address || '-';
+                  
       standard_address = qqMapData.result.address_component ? 
-        `${qqMapData.result.address_component.province}${qqMapData.result.address_component.city}${qqMapData.result.address_component.district}${qqMapData.result.address_component.street}${qqMapData.result.address_component.street_number}` : 
+        `${qqMapData.result.address_component.province || ''}${qqMapData.result.address_component.city || ''}${qqMapData.result.address_component.district || ''}${qqMapData.result.address_component.street || ''}${qqMapData.result.address_component.street_number || ''}` : 
         qqMapData.result.address || '-';
+    } else {
+      console.error('腾讯地图API返回错误:', qqMapData);
+      recommend = '获取位置信息失败';
+      standard_address = '获取位置信息失败';
     }
 
     return new Response(JSON.stringify({
