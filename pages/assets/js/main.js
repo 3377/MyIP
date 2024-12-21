@@ -158,6 +158,9 @@ async function fetchIPInfo(ip) {
         if (locationResponse.ok) {
           const locationData = await locationResponse.json();
           if (locationData.success) {
+            // 输出调试信息
+            console.log('API调试信息:', locationData.debug);
+            
             // 更新经纬度信息
             info.lat = locationData.lat || '-';
             info.lng = locationData.lng || '-';
@@ -198,7 +201,7 @@ async function fetchPublicIP() {
     if (data.type === 'success' && data.ip) {
       fetchIPInfo(data.ip);
     } else {
-      // 如果主API失败，才使用后备方案
+      // 如果主API失败，���使用后备方案
       const backupResponse = await fetch('/_api/public-ip');
       const backupData = await backupResponse.json();
       
