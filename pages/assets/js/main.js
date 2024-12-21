@@ -152,38 +152,21 @@ async function fetchIPInfo(ip) {
 // 获取公网IP
 async function fetchPublicIP() {
   try {
-    // 尝试使用多个公共API来获取真实IP
-    const apis = [
-      'https://api.ipify.org?format=json',
-      'https://api.ip.sb/jsonip',
-      'https://api.myip.com'
-    ];
-
-    for (const api of apis) {
-      try {
-        const response = await fetch(api);
-        const data = await response.json();
-        // 不同API返回格式不同，需要相应处理
-        const ip = data.ip || data.myip;
-        
-        if (ip) {
-          fetchIPInfo(ip);
-          return;
-        }
-      } catch (e) {
-        console.error(`API ${api} failed:`, e);
-        continue;
-      }
-    }
-
-    // 如果所有API都失败了，才使用后备方案
-    const response = await fetch('/_api/public-ip');
+    const response = await fetch('https://ipv4_cm.itdog.cn');
     const data = await response.json();
     
-    if (data.success && data.ip) {
+    if (data.type === 'success' && data.ip) {
       fetchIPInfo(data.ip);
     } else {
-      $("#result").html("无法获取公网IP地址。");
+      // 如果主API失败，才使用后备方案
+      const backupResponse = await fetch('/_api/public-ip');
+      const backupData = await backupResponse.json();
+      
+      if (backupData.success && backupData.ip) {
+        fetchIPInfo(backupData.ip);
+      } else {
+        $("#result").html("无法获取公网IP地址。");
+      }
     }
   } catch (error) {
     console.error('获取公网IP失败:', error);
@@ -340,7 +323,7 @@ async function fetchLocationInfo(lat, lng) {
   }
 }
 
-// 添加错误处理函数
+// 添加错误处理函���
 function updateLocationError() {
   const errorMsg = "位置信息获取失败";
   $(".info-row").each(function () {
