@@ -58,10 +58,10 @@ async function displayResult(ip, info) {
   content += createInfoItem("省份", info.prov || "-");
   content += createInfoItem("城市", info.city || "-");
   content += createInfoItem("区县", info.district || "-");
-  content += createInfoItem("位置A", "正在获取...");
-  content += createInfoItem("位置B", "正在获取...");
-  content += createInfoItem("位置C", "正在获取...");
-  content += createInfoItem("位置D", "正在获取...");
+  content += createInfoItem("位置A", info.locationA || "正在获取...");
+  content += createInfoItem("位置B", info.locationB || "正在获取...");
+  content += createInfoItem("位置C", info.locationC || "正在获取...");
+  content += createInfoItem("位置D", info.locationD || "正在获取...");
   content += createInfoItem("北京时间", '<span id="beijingTime"></span>');
   content += createInfoItem("UTC时间", '<span id="utcTime"></span>');
   content += createInfoItem("美东时间", '<span id="usTime"></span>');
@@ -102,11 +102,21 @@ async function displayResult(ip, info) {
 }
 
 // 更新位置信息
-function updateLocationInfo(locationInfo) {
+function updateLocationInfo(info) {
   $(".info-row").each(function () {
     const label = $(this).find(".info-label").text().trim();
-    if (label === "位置C:") {
-      const address = locationInfo.recommend || "-";
+    if (label === "位置A:") {
+      const address = info.locationA || "-";
+      $(this)
+        .find(".info-value")
+        .text(address);
+    } else if (label === "位置B:") {
+      const address = info.locationB || "-";
+      $(this)
+        .find(".info-value")
+        .text(address);
+    } else if (label === "位置C:") {
+      const address = info.locationC || "-";
       $(this)
         .find(".info-value")
         .removeClass("copyable-value")
@@ -114,13 +124,13 @@ function updateLocationInfo(locationInfo) {
         .attr("onclick", `window.copyIP('${address}')`)
         .html(address + '<span class="copy-tooltip">已复制!</span>');
     } else if (label === "位置D:") {
-      const standardAddress = locationInfo.standard_address || "-";
+      const address = info.locationD || "-";
       $(this)
         .find(".info-value")
         .removeClass("copyable-value")
         .addClass("copyable-value")
-        .attr("onclick", `window.copyIP('${standardAddress}')`)
-        .html(standardAddress + '<span class="copy-tooltip">已复制!</span>');
+        .attr("onclick", `window.copyIP('${address}')`)
+        .html(address + '<span class="copy-tooltip">已复制!</span>');
     }
   });
 }
@@ -133,13 +143,44 @@ async function fetchIPInfo(ip) {
   }
 
   try {
-    const response = await fetch('/_api/ip-info?' + new URLSearchParams({
-      ip: ip
-    }));
+    // 直接从百度API获取IP基础信息
+    const response = await fetch(`https://qifu-api.baidubce.com/ip/geo/v1/district?ip=${ip}`);
     const data = await response.json();
     
-    if (data.success) {
-      displayResult(ip, data.info);
+    if (data.code === 0 && data.data) {
+      // 转换百度API返回的数据格式后，调用后端API获取详细信息
+      const info = {
+        continent: data.data.continent || '-',
+        country: data.data.country || '-',
+        prov: data.data.prov || '-',
+        city: data.data.city || '-',
+        district: data.data.district || '-',
+        isp: data.data.isp || '-',
+        lat: data.data.location?.lat || '-',
+        lng: data.data.location?.lng || '-',
+        owner: data.data.owner || '-',
+        accuracy: data.data.accuracy || '-',
+        zipcode: data.data.zipcode || '-',
+        adcode: data.data.adcode || '-'
+      };
+
+      // 通过后端API获取位置详细信息
+      const locationResponse = await fetch('/_api/location?' + new URLSearchParams({
+        lat: info.lat,
+        lng: info.lng
+      }));
+      
+      if (locationResponse.ok) {
+        const locationData = await locationResponse.json();
+        if (locationData.status === 0) {
+          info.locationA = locationData.locationA;
+          info.locationB = locationData.locationB;
+          info.locationC = locationData.locationC;
+          info.locationD = locationData.locationD;
+        }
+      }
+      
+      displayResult(ip, info);
     } else {
       $("#result").html(data.message || "获取IP信息失败。");
     }
@@ -293,9 +334,8 @@ $(document).ready(function () {
   fetchPublicIP();
 });
 
-// 修改获取位置信息的部分
+// 修改位置信息获取函数
 async function fetchLocationInfo(lat, lng) {
-  // 添加参数验证
   if (!lat || !lng || lat === '-' || lng === '-') {
     return { 
       status: 1, 
@@ -304,16 +344,26 @@ async function fetchLocationInfo(lat, lng) {
   }
 
   try {
-    const response = await fetch('/_api/location?' + new URLSearchParams({
-      lat,
-      lng
-    }));
+    // 使用腾讯地图API获取详细位置信息
+    const key = window.TENCENT_MAP_KEY;
+    const response = await fetch(`https://apis.map.qq.com/ws/geocoder/v1/?location=${lat},${lng}&key=${key}`);
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     
-    return await response.json();
+    const data = await response.json();
+    if (data.status === 0) {
+      return {
+        status: 0,
+        recommend: data.result.formatted_addresses?.recommend || data.result.address,
+        standard_address: data.result.address_component ? 
+          `${data.result.address_component.province}${data.result.address_component.city}${data.result.address_component.district}${data.result.address_component.street}${data.result.address_component.street_number}` : 
+          data.result.address
+      };
+    } else {
+      throw new Error(data.message);
+    }
   } catch (error) {
     console.error('获取位置信息失败:', error);
     return { 
@@ -323,7 +373,7 @@ async function fetchLocationInfo(lat, lng) {
   }
 }
 
-// 添加错误处理函���
+// 添加错误处理函数
 function updateLocationError() {
   const errorMsg = "位置信息获取失败";
   $(".info-row").each(function () {
