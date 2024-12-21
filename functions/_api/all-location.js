@@ -50,6 +50,8 @@ export async function onRequest(context) {
 
     // 4. 获取腾讯地图信息
     const tencentKey = context.env.TENCENT_MAP_KEY;
+    console.log('腾讯地图API密钥:', tencentKey);
+
     if (!tencentKey) {
       console.error('腾讯地图API密钥未配置');
       return new Response(JSON.stringify({
@@ -70,6 +72,14 @@ export async function onRequest(context) {
         }
       });
     }
+
+    // 输出更多调试信息
+    console.log('准备调用腾讯地图API，参数:', {
+      lat,
+      lng,
+      key: tencentKey ? '已配置' : '未配置',
+      url: `https://apis.map.qq.com/ws/geocoder/v1/?location=${lat},${lng}&key=${tencentKey}&get_poi=0`
+    });
 
     const qqMapResponse = await fetch(
       `https://apis.map.qq.com/ws/geocoder/v1/?location=${lat},${lng}&key=${tencentKey}&get_poi=0`
