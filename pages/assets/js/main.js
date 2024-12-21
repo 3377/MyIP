@@ -83,22 +83,6 @@ async function displayResult(ip, info) {
     clearInterval(window.timeInterval);
   }
   window.timeInterval = setInterval(updateTime, 1000);
-
-  // 如果有经纬度信息，获取位置信息
-  if (info.lat && info.lng) {
-    try {
-      const locationInfo = await fetchLocationInfo(info.lat, info.lng);
-      if (locationInfo.status === 0) {
-        updateLocationInfo(locationInfo);
-      } else {
-        // 更新位置信息为错误状态
-        updateLocationError();
-      }
-    } catch (error) {
-      console.error('获取位置信息失败:', error);
-      updateLocationError();
-    }
-  }
 }
 
 // 更新位置信息
@@ -165,48 +149,35 @@ async function fetchIPInfo(ip) {
       // 显示基本数据
       displayResult(ip, info);
       
-      // 获取美团经纬度和位置信息
       try {
-        // 调用后端API获取美团经纬度
-        const mtResponse = await fetch('/_api/meituan-location?' + new URLSearchParams({
+        // 调用后端API获取所有位置信息（包括美团经纬度和位置信息）
+        const locationResponse = await fetch('/_api/all-location?' + new URLSearchParams({
           ip: ip
         }));
         
-        if (mtResponse.ok) {
-          const mtData = await mtResponse.json();
-          if (mtData.success && mtData.data) {
+        if (locationResponse.ok) {
+          const locationData = await locationResponse.json();
+          if (locationData.success) {
             // 更新经纬度信息
-            info.lat = mtData.data.lat || '-';
-            info.lng = mtData.data.lng || '-';
+            info.lat = locationData.lat || '-';
+            info.lng = locationData.lng || '-';
             info.accuracy = (info.lat !== '-' && info.lng !== '-') ? '高精度' : '低精度';
             
             // 更新显示
             displayResult(ip, info);
 
-            // 如果有经纬度，获取街道信息
-            if (info.lat !== '-' && info.lng !== '-') {
-              // 获取街道和位置详细信息
-              const locationResponse = await fetch('/_api/location?' + new URLSearchParams({
-                ip: ip,
-                lat: info.lat,
-                lng: info.lng
-              }));
-
-              if (locationResponse.ok) {
-                const locationData = await locationResponse.json();
-                if (locationData.status === 0) {
-                  updateLocationInfo(locationData);
-                } else {
-                  console.error('位置信息API返回错误:', locationData);
-                }
-              } else {
-                console.error('位置信息API请求失败:', locationResponse.status);
-              }
+            // 更新位置信息
+            if (locationData.locations) {
+              updateLocationInfo(locationData.locations);
             }
+          } else {
+            console.error('位置信息API返回错误:', locationData);
           }
+        } else {
+          console.error('位置信息API请求失败:', locationResponse.status);
         }
       } catch (error) {
-        console.error('获取美团位置信息失败:', error);
+        console.error('获取位置信息失败:', error);
       }
     } else {
       console.error('百度API返回错误:', data);
@@ -362,7 +333,7 @@ $(document).ready(function () {
   fetchPublicIP();
 });
 
-// 修改位置信息获取函数
+// 修改位置信息获取数
 async function fetchLocationInfo(lat, lng) {
   if (!lat || !lng || lat === '-' || lng === '-') {
     return { 
