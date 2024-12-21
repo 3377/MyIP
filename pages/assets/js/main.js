@@ -152,17 +152,38 @@ async function fetchIPInfo(ip) {
 // 获取公网IP
 async function fetchPublicIP() {
   try {
-    const response = await fetch('/_api/public-ip', {
-      headers: {
-        'Accept': 'application/json'
+    // 尝试使用多个公共API来获取真实IP
+    const apis = [
+      'https://api.ipify.org?format=json',
+      'https://api.ip.sb/jsonip',
+      'https://api.myip.com'
+    ];
+
+    for (const api of apis) {
+      try {
+        const response = await fetch(api);
+        const data = await response.json();
+        // 不同API返回格式不同，需要相应处理
+        const ip = data.ip || data.myip;
+        
+        if (ip) {
+          fetchIPInfo(ip);
+          return;
+        }
+      } catch (e) {
+        console.error(`API ${api} failed:`, e);
+        continue;
       }
-    });
+    }
+
+    // 如果所有API都失败了，才使用后备方案
+    const response = await fetch('/_api/public-ip');
     const data = await response.json();
     
     if (data.success && data.ip) {
       fetchIPInfo(data.ip);
     } else {
-      $("#result").html(data.message || "无法获取公网IP地址。");
+      $("#result").html("无法获取公网IP地址。");
     }
   } catch (error) {
     console.error('获取公网IP失败:', error);
