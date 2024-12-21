@@ -87,16 +87,16 @@ async function displayResult(ip, info) {
   // 如果有经纬度信息，获取位置信息
   if (info.lat && info.lng) {
     try {
-      const locationInfo = await fetch('/_api/location?' + new URLSearchParams({
-        lat: info.lat,
-        lng: info.lng
-      })).then(r => r.json());
-
+      const locationInfo = await fetchLocationInfo(info.lat, info.lng);
       if (locationInfo.status === 0) {
         updateLocationInfo(locationInfo);
+      } else {
+        // 更新位置信息为错误状态
+        updateLocationError();
       }
     } catch (error) {
       console.error('获取位置信息失败:', error);
+      updateLocationError();
     }
   }
 }
@@ -152,7 +152,13 @@ async function fetchIPInfo(ip) {
 // 获取公网IP
 async function fetchPublicIP() {
   try {
-    const response = await fetch('/_api/public-ip');
+    // 添加额外的请求头来获取真实IP
+    const response = await fetch('/_api/public-ip', {
+      headers: {
+        'Accept': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest'
+      }
+    });
     const data = await response.json();
     
     if (data.success && data.ip) {
@@ -283,4 +289,45 @@ $(document).ready(function () {
   });
 
   fetchPublicIP();
-}); 
+});
+
+// 修改获取位置信息的部分
+async function fetchLocationInfo(lat, lng) {
+  // 添加参数验证
+  if (!lat || !lng || lat === '-' || lng === '-') {
+    return { 
+      status: 1, 
+      message: '无效的经纬度信息'
+    };
+  }
+
+  try {
+    const response = await fetch('/_api/location?' + new URLSearchParams({
+      lat,
+      lng
+    }));
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('获取位置信息失败:', error);
+    return { 
+      status: 1, 
+      message: error.message 
+    };
+  }
+}
+
+// 添加错误处理函数
+function updateLocationError() {
+  const errorMsg = "位置信息获取失败";
+  $(".info-row").each(function () {
+    const label = $(this).find(".info-label").text().trim();
+    if (label === "位置C:" || label === "位置D:") {
+      $(this).find(".info-value").text(errorMsg);
+    }
+  });
+} 
