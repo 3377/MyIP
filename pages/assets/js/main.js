@@ -145,7 +145,6 @@ async function fetchIPInfo(ip) {
     const response = await fetch(`https://qifu-api.baidubce.com/ip/geo/v1/district?ip=${ip}`);
     const data = await response.json();
     
-    // 修改判断条件，适配百度API的返回格式
     if (data.code === 'Success' && data.data) {
       // 转换百度API返回的数据格式
       const info = {
@@ -155,39 +154,59 @@ async function fetchIPInfo(ip) {
         city: data.data.city || '-',
         district: data.data.district || '-',
         isp: data.data.isp || '-',
-        lat: '-',  // 将使用后端返回的经纬度
-        lng: '-',  // 将使用后端返回的经纬度
+        lat: '-',
+        lng: '-',
         owner: data.data.owner || '-',
-        accuracy: data.data.accuracy || '-',
+        accuracy: '-',
         zipcode: data.data.zipcode || '-',
         adcode: data.data.adcode || '-'
       };
+
+      // 显示基本数据
+      displayResult(ip, info);
       
-      // 获取后端API的位置信息（包含美团经纬度）
+      // 获取美团经纬度和位置信息
       try {
-        const locationResponse = await fetch('/_api/location?' + new URLSearchParams({
+        // 调用后端API获取美团经纬度
+        const mtResponse = await fetch('/_api/meituan-location?' + new URLSearchParams({
           ip: ip
         }));
         
-        if (locationResponse.ok) {
-          const locationData = await locationResponse.json();
-          if (locationData.status === 0) {
-            // 使用后端返回的经纬度更新info
-            info.lat = locationData.lat || '-';
-            info.lng = locationData.lng || '-';
+        if (mtResponse.ok) {
+          const mtData = await mtResponse.json();
+          if (mtData.success && mtData.data) {
+            // 更新经纬度信息
+            info.lat = mtData.data.lat || '-';
+            info.lng = mtData.data.lng || '-';
+            info.accuracy = (info.lat !== '-' && info.lng !== '-') ? '高精度' : '低精度';
+            
+            // 更新显示
             displayResult(ip, info);
-            updateLocationInfo(locationData);
-          } else {
-            console.error('位置信息API返回错误:', locationData);
-            displayResult(ip, info);
+
+            // 如果有经纬度，获取街道信息
+            if (info.lat !== '-' && info.lng !== '-') {
+              // 获取街道和位置详细信息
+              const locationResponse = await fetch('/_api/location?' + new URLSearchParams({
+                ip: ip,
+                lat: info.lat,
+                lng: info.lng
+              }));
+
+              if (locationResponse.ok) {
+                const locationData = await locationResponse.json();
+                if (locationData.status === 0) {
+                  updateLocationInfo(locationData);
+                } else {
+                  console.error('位置信息API返回错误:', locationData);
+                }
+              } else {
+                console.error('位置信息API请求失败:', locationResponse.status);
+              }
+            }
           }
-        } else {
-          console.error('位置信息API请求失败:', locationResponse.status);
-          displayResult(ip, info);
         }
       } catch (error) {
-        console.error('获取位置信息失败:', error);
-        displayResult(ip, info);
+        console.error('获取美团位置信息失败:', error);
       }
     } else {
       console.error('百度API返回错误:', data);
