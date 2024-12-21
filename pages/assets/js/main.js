@@ -141,23 +141,12 @@ async function fetchIPInfo(ip) {
   }
 
   try {
-    // 先从后端API获取经纬度信息（美团第一个API）
-    const geoResponse = await fetch('/_api/ip-geo?' + new URLSearchParams({
-      ip: ip
-    }));
-    
-    if (!geoResponse.ok) {
-      throw new Error('获取地理位置信息失败');
-    }
-
-    const geoData = await geoResponse.json();
-    
     // 从百度API获取IP基础信息
     const response = await fetch(`https://qifu-api.baidubce.com/ip/geo/v1/district?ip=${ip}`);
     const data = await response.json();
     
     if (data.code === 0 && data.data) {
-      // 合并百度API和美团API的数据
+      // 转换百度API返回的数据格式
       const info = {
         continent: data.data.continent || '-',
         country: data.data.country || '-',
@@ -165,34 +154,36 @@ async function fetchIPInfo(ip) {
         city: data.data.city || '-',
         district: data.data.district || '-',
         isp: data.data.isp || '-',
-        lat: geoData.success ? geoData.lat : (data.data.location?.lat || '-'),
-        lng: geoData.success ? geoData.lng : (data.data.location?.lng || '-'),
+        lat: '-',  // 将使用后端返回的经纬度
+        lng: '-',  // 将使用后端返回的经纬度
         owner: data.data.owner || '-',
         accuracy: data.data.accuracy || '-',
         zipcode: data.data.zipcode || '-',
         adcode: data.data.adcode || '-'
       };
       
-      displayResult(ip, info);
-
-      // 获取位置详细信息
-      if (info.lat && info.lng) {
-        try {
-          const locationResponse = await fetch('/_api/location?' + new URLSearchParams({
-            ip: ip,
-            lat: info.lat,
-            lng: info.lng
-          }));
-          
-          if (locationResponse.ok) {
-            const locationData = await locationResponse.json();
-            if (locationData.status === 0) {
-              updateLocationInfo(locationData);
-            }
+      // 获取后端API的位置信息（包含美团经纬度）
+      try {
+        const locationResponse = await fetch('/_api/location?' + new URLSearchParams({
+          ip: ip
+        }));
+        
+        if (locationResponse.ok) {
+          const locationData = await locationResponse.json();
+          if (locationData.status === 0) {
+            // 使用后端返回的经纬度更新info
+            info.lat = locationData.lat || data.data.location?.lat || '-';
+            info.lng = locationData.lng || data.data.location?.lng || '-';
+            displayResult(ip, info);
+            updateLocationInfo(locationData);
           }
-        } catch (error) {
-          console.error('获取位置信息失败:', error);
         }
+      } catch (error) {
+        console.error('获取位置信息失败:', error);
+        // 如果后端API失败，使用百度API的经纬度
+        info.lat = data.data.location?.lat || '-';
+        info.lng = data.data.location?.lng || '-';
+        displayResult(ip, info);
       }
     } else {
       $("#result").html(data.message || "获取IP信息失败。");
