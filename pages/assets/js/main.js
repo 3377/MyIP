@@ -152,11 +152,9 @@ async function fetchIPInfo(ip) {
 // 获取公网IP
 async function fetchPublicIP() {
   try {
-    // 添加额外的请求头来获取真实IP
     const response = await fetch('/_api/public-ip', {
       headers: {
-        'Accept': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest'
+        'Accept': 'application/json'
       }
     });
     const data = await response.json();
