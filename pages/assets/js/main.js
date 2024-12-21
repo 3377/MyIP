@@ -145,7 +145,8 @@ async function fetchIPInfo(ip) {
     const response = await fetch(`https://qifu-api.baidubce.com/ip/geo/v1/district?ip=${ip}`);
     const data = await response.json();
     
-    if (data.code === 0 && data.data) {
+    // 修改判断条件，适配百度API的返回格式
+    if (data.code === 'Success' && data.data) {
       // 转换百度API返回的数据格式
       const info = {
         continent: data.data.continent || '-',
@@ -172,20 +173,24 @@ async function fetchIPInfo(ip) {
           const locationData = await locationResponse.json();
           if (locationData.status === 0) {
             // 使用后端返回的经纬度更新info
-            info.lat = locationData.lat || data.data.location?.lat || '-';
-            info.lng = locationData.lng || data.data.location?.lng || '-';
+            info.lat = locationData.lat || '-';
+            info.lng = locationData.lng || '-';
             displayResult(ip, info);
             updateLocationInfo(locationData);
+          } else {
+            console.error('位置信息API返回错误:', locationData);
+            displayResult(ip, info);
           }
+        } else {
+          console.error('位置信息API请求失败:', locationResponse.status);
+          displayResult(ip, info);
         }
       } catch (error) {
         console.error('获取位置信息失败:', error);
-        // 如果后端API失败，使用百度API的经纬度
-        info.lat = data.data.location?.lat || '-';
-        info.lng = data.data.location?.lng || '-';
         displayResult(ip, info);
       }
     } else {
+      console.error('百度API返回错误:', data);
       $("#result").html(data.message || "获取IP信息失败。");
     }
   } catch (error) {
