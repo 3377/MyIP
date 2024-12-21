@@ -102,21 +102,19 @@ async function displayResult(ip, info) {
 }
 
 // 更新位置信息
-function updateLocationInfo(info) {
+function updateLocationInfo(locationInfo) {
   $(".info-row").each(function () {
     const label = $(this).find(".info-label").text().trim();
     if (label === "位置A:") {
-      const address = info.locationA || "-";
       $(this)
         .find(".info-value")
-        .text(address);
+        .text(locationInfo.locationA || "-");
     } else if (label === "位置B:") {
-      const address = info.locationB || "-";
       $(this)
         .find(".info-value")
-        .text(address);
+        .text(locationInfo.locationB || "-");
     } else if (label === "位置C:") {
-      const address = info.locationC || "-";
+      const address = locationInfo.recommend || "-";
       $(this)
         .find(".info-value")
         .removeClass("copyable-value")
@@ -124,13 +122,13 @@ function updateLocationInfo(info) {
         .attr("onclick", `window.copyIP('${address}')`)
         .html(address + '<span class="copy-tooltip">已复制!</span>');
     } else if (label === "位置D:") {
-      const address = info.locationD || "-";
+      const standardAddress = locationInfo.standard_address || "-";
       $(this)
         .find(".info-value")
         .removeClass("copyable-value")
         .addClass("copyable-value")
-        .attr("onclick", `window.copyIP('${address}')`)
-        .html(address + '<span class="copy-tooltip">已复制!</span>');
+        .attr("onclick", `window.copyIP('${standardAddress}')`)
+        .html(standardAddress + '<span class="copy-tooltip">已复制!</span>');
     }
   });
 }
@@ -143,12 +141,23 @@ async function fetchIPInfo(ip) {
   }
 
   try {
-    // 直接从百度API获取IP基础信息
+    // 先从后端API获取经纬度信息（美团第一个API）
+    const geoResponse = await fetch('/_api/ip-geo?' + new URLSearchParams({
+      ip: ip
+    }));
+    
+    if (!geoResponse.ok) {
+      throw new Error('获取地理位置信息失败');
+    }
+
+    const geoData = await geoResponse.json();
+    
+    // 从百度API获取IP基础信息
     const response = await fetch(`https://qifu-api.baidubce.com/ip/geo/v1/district?ip=${ip}`);
     const data = await response.json();
     
     if (data.code === 0 && data.data) {
-      // 转换百度API返回的数据格式后，调用后端API获取详细信息
+      // 合并百度API和美团API的数据
       const info = {
         continent: data.data.continent || '-',
         country: data.data.country || '-',
@@ -156,31 +165,35 @@ async function fetchIPInfo(ip) {
         city: data.data.city || '-',
         district: data.data.district || '-',
         isp: data.data.isp || '-',
-        lat: data.data.location?.lat || '-',
-        lng: data.data.location?.lng || '-',
+        lat: geoData.success ? geoData.lat : (data.data.location?.lat || '-'),
+        lng: geoData.success ? geoData.lng : (data.data.location?.lng || '-'),
         owner: data.data.owner || '-',
         accuracy: data.data.accuracy || '-',
         zipcode: data.data.zipcode || '-',
         adcode: data.data.adcode || '-'
       };
-
-      // 通过后端API获取位置详细信息
-      const locationResponse = await fetch('/_api/location?' + new URLSearchParams({
-        lat: info.lat,
-        lng: info.lng
-      }));
-      
-      if (locationResponse.ok) {
-        const locationData = await locationResponse.json();
-        if (locationData.status === 0) {
-          info.locationA = locationData.locationA;
-          info.locationB = locationData.locationB;
-          info.locationC = locationData.locationC;
-          info.locationD = locationData.locationD;
-        }
-      }
       
       displayResult(ip, info);
+
+      // 获取位置详细信息
+      if (info.lat && info.lng) {
+        try {
+          const locationResponse = await fetch('/_api/location?' + new URLSearchParams({
+            ip: ip,
+            lat: info.lat,
+            lng: info.lng
+          }));
+          
+          if (locationResponse.ok) {
+            const locationData = await locationResponse.json();
+            if (locationData.status === 0) {
+              updateLocationInfo(locationData);
+            }
+          }
+        } catch (error) {
+          console.error('获取位置信息失败:', error);
+        }
+      }
     } else {
       $("#result").html(data.message || "获取IP信息失败。");
     }
