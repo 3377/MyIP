@@ -28,7 +28,7 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    font-family: "DingTalk JinBuTi", "Noto Sans SC", system-ui, -apple-system, sans-serif !important;
+    font-family: "DingTalk JinBuTi", "Noto Sans SC", system-ui, -apple-system, sans-serif;
     font-weight: 400;
 }
 
@@ -38,7 +38,6 @@ body {
     min-height: 100vh;
     display: flex;
     align-items: center;
-    font-family: "DingTalk JinBuTi", "Noto Sans SC", system-ui, -apple-system, sans-serif !important;
 }
 
 .info-label {
@@ -47,7 +46,6 @@ body {
     margin-right: 10px;
     flex-shrink: 0;
     text-align: left;
-    font-family: "DingTalk JinBuTi", "Noto Sans SC", system-ui, -apple-system, sans-serif !important;
 }
 
 .info-value {
@@ -55,14 +53,12 @@ body {
     font-weight: 400;
     text-align: right;
     flex-shrink: 0;
-    font-family: "DingTalk JinBuTi", "Noto Sans SC", system-ui, -apple-system, sans-serif !important;
 }
 
 h1 {
-    font-size: 2.5rem;
+    font-size: 3rem;
     margin: 0;
     font-weight: 400;
-    font-family: "DingTalk JinBuTi", "Noto Sans SC", system-ui, -apple-system, sans-serif !important;
 }
 
 .card {
@@ -165,5 +161,9 @@ h1 {
         flex: 1;
         margin-right: 5px;
         text-align: left;
+    }
+
+    h1 {
+        font-size: 2.5rem;
     }
 }
