@@ -8,13 +8,28 @@
     font-display: swap;
 }
 
+/* 覆盖 Bootstrap 默认变量 */
 :root {
-    --main-font: "钉钉进步体", -apple-system, "Microsoft YaHei", sans-serif !important;
-    --bs-body-font-family: var(--main-font);
+    --bs-body-font-family: "钉钉进步体", -apple-system, "Microsoft YaHei", sans-serif;
+    --bs-body-bg: #f0f5f9;
+    --bs-body-color: #212529;
 }
 
-html body {
-    font-family: var(--main-font) !important;
+/* 重置基础样式 */
+* {
+    -webkit-text-size-adjust: 100% !important;
+    font-family: var(--bs-body-font-family) !important;
+}
+
+body {
+    background-color: var(--bs-body-bg) !important;
+    background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4"%3E%3Cpath fill="%239C92AC" fill-opacity="0.1" d="M1 3h1v1H1V3zm2-2h1v1H3V1z"%3E%3C/path%3E%3C/svg%3E');
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: var(--bs-body-font-family) !important;
+    color: var(--bs-body-color) !important;
 }
 
 .container {
@@ -43,15 +58,6 @@ h1 {
     margin: 0;
     font-weight: 600;
     font-family: var(--main-font) !important;
-}
-
-body {
-    background-color: #f0f5f9;
-    background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4"%3E%3Cpath fill="%239C92AC" fill-opacity="0.1" d="M1 3h1v1H1V3zm2-2h1v1H3V1z"%3E%3C/path%3E%3C/svg%3E');
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
 }
 
 .card {
