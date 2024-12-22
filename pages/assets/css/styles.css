@@ -1,7 +1,9 @@
-/* 添加钉钉进步体字体声明 */
+/* 在线链接服务仅供平台体验和调试使用，平台不承诺服务的稳定性，企业客户需下载字体包自行发布使用并做好备份。 */
 @font-face {
-    font-family: 'DingTalk';
-    src: url('https://at.alicdn.com/wf/webfont/L1WyLWKQzuVe/jinbuti.woff2') format('woff2');
+    font-family: "钉钉进步体 Regular";
+    font-weight: 400;
+    src: url("//at.alicdn.com/wf/webfont/3d4ClBTz1cYr/joaSMPJbFDaR.woff2") format("woff2"),
+        url("//at.alicdn.com/wf/webfont/3d4ClBTz1cYr/RuWZyg7d2F8g.woff") format("woff");
     font-display: swap;
 }
 
@@ -12,7 +14,7 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    font-family: "DingTalk", "Microsoft YaHei", sans-serif;
+    font-family: "钉钉进步体 Regular", "Microsoft YaHei", sans-serif;
 }
 
 .container {
@@ -71,7 +73,7 @@ body {
     margin-right: 10px;
     flex-shrink: 0;
     text-align: left;
-    font-family: "DingTalk", "Microsoft YaHei", sans-serif;
+    font-family: "钉钉进步体 Regular", "Microsoft YaHei", sans-serif;
 }
 
 .info-value {
@@ -79,7 +81,7 @@ body {
     font-weight: 600;
     text-align: right;
     flex-shrink: 0;
-    font-family: "DingTalk", "Microsoft YaHei", sans-serif;
+    font-family: "钉钉进步体 Regular", "Microsoft YaHei", sans-serif;
 }
 
 .ip-value {
@@ -109,7 +111,7 @@ h1 {
     font-size: 2rem;
     margin: 0;
     font-weight: 600;
-    font-family: "DingTalk", "Microsoft YaHei", sans-serif;
+    font-family: "钉钉进步体 Regular", "Microsoft YaHei", sans-serif;
 }
 
 .loading {
