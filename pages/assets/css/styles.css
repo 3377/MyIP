@@ -23,7 +23,7 @@
 
 body {
     background-color: #f0f5f9;
-    background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4"%3E%3Cpath fill="%239C92AC" fill-opacity="0.1" d="M1 3h1v1H1V3zm2-2h1v1H3V1z"%3E%3C/path%3E%3C/svg%3E');
+    background-image: linear-gradient(135deg, rgba(106, 17, 203, 0.1) 0%, rgba(37, 117, 252, 0.1) 100%);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -34,11 +34,11 @@ body {
 
 .container {
     max-width: 800px;
-    padding: 0;
+    padding: 20px;
     min-height: 100vh;
     display: flex;
     align-items: center;
-    font-family: "DingTalk JinBuTi", "Noto Sans SC", system-ui, -apple-system, sans-serif !important;
+    perspective: 1000px;
 }
 
 .info-label {
@@ -69,38 +69,55 @@ h1 {
     width: 100%;
     border-radius: 20px !important;
     overflow: hidden;
-    background: rgba(255, 255, 255, 0.9) !important;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.7) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow:
+        0 8px 32px 0 rgba(31, 38, 135, 0.15),
+        0 0 0 1px rgba(255, 255, 255, 0.2) inset,
+        0 0 20px rgba(0, 0, 0, 0.05);
+    border: none;
+    transform-style: preserve-3d;
     transform: translateZ(0);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow:
+        0 15px 35px 0 rgba(31, 38, 135, 0.2),
+        0 0 0 1px rgba(255, 255, 255, 0.3) inset,
+        0 0 30px rgba(0, 0, 0, 0.1);
 }
 
 .card-header {
-    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+    background: linear-gradient(135deg, rgba(106, 17, 203, 0.95) 0%, rgba(37, 117, 252, 0.95) 100%);
     color: white;
     border-radius: 20px 20px 0 0 !important;
-    padding: 12px 18px;
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+    padding: 15px 20px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .card-body {
     padding: 0 15px !important;
-    background: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
 .info-row {
     display: flex;
     justify-content: space-between;
-    padding: 6px 15px !important;
-    border-bottom: 1px solid rgba(224, 224, 224, 0.5);
+    padding: 8px 15px !important;
+    border-bottom: 1px solid rgba(224, 224, 224, 0.3);
     font-size: 1.05rem;
     margin: 0 !important;
     align-items: center;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.4);
 }
 
 .info-row:first-child {
@@ -115,7 +132,9 @@ h1 {
 }
 
 .info-row:hover {
-    background-color: rgba(248, 249, 250, 0.8);
+    background: rgba(255, 255, 255, 0.8);
+    transform: translateX(5px);
+    box-shadow: -5px 0 10px -5px rgba(0, 0, 0, 0.1);
 }
 
 .ip-value {

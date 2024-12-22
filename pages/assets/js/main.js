@@ -24,35 +24,35 @@ function createInfoItem(label, value) {
 
 // 加载访问统计
 function loadBusuanziScript() {
-  // 先移除已存在的脚本（如果有）
-  const existingScript = document.getElementById('busuanzi');
-  if (existingScript) {
-    existingScript.remove();
+  // 移除旧的脚本
+  const oldScript = document.getElementById('busuanzi_script');
+  if (oldScript) {
+    oldScript.remove();
   }
 
-  // 创建新的脚本标签
+  // 创建新的脚本
   const script = document.createElement('script');
-  script.id = 'busuanzi';
+  script.id = 'busuanzi_script';
   script.async = true;
-  script.src = "//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js";
+  script.src = '//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js';
   
-  // 添加加载完成的回调
   script.onload = function() {
+    // 显示统计容器
+    $('#busuanzi_container_site_pv, #busuanzi_container_site_uv').css('display', 'inline');
+    
+    // 检查统计值
     setTimeout(function() {
-      const pv = document.getElementById("busuanzi_value_site_pv");
-      const uv = document.getElementById("busuanzi_value_site_uv");
-      
-      if (pv && pv.innerHTML === "") {
-        pv.innerHTML = "无法获取";
+      if ($('#busuanzi_value_site_pv').text() === '') {
+        $('#busuanzi_value_site_pv').text('无法获取');
       }
-      if (uv && uv.innerHTML === "") {
-        uv.innerHTML = "无法获取";
+      if ($('#busuanzi_value_site_uv').text() === '') {
+        $('#busuanzi_value_site_uv').text('无法获取');
       }
     }, 3000);
   };
 
-  // 添加脚本到页面
-  document.body.appendChild(script);
+  // 添加到页面头部而不是body
+  document.head.appendChild(script);
 }
 
 // 显示结果
@@ -77,21 +77,20 @@ async function displayResult(ip, info) {
   content += createInfoItem("位置A", info.locationA || "正在获取...");
   content += createInfoItem("位置B", info.locationB || "正在获取...");
   content += createInfoItem("位置C", info.locationC || "正在获取...");
-  content += createInfoItem("位置D", info.locationD || "正在获��...");
+  content += createInfoItem("位置D", info.locationD || "正在获取...");
   content += createInfoItem("北京时间", '<span id="beijingTime"></span>');
   content += createInfoItem("UTC时间", '<span id="utcTime"></span>');
   content += createInfoItem("美东时间", '<span id="usTime"></span>');
   content += createInfoItem(
     "访问总数",
-    '<span id="busuanzi_value_site_pv">-</span>'
+    '<span id="busuanzi_container_site_pv" style="display: none"><span id="busuanzi_value_site_pv">-</span></span>'
   );
   content += createInfoItem(
     "访客总数",
-    '<span id="busuanzi_value_site_uv">-</span>'
+    '<span id="busuanzi_container_site_uv" style="display: none"><span id="busuanzi_value_site_uv">-</span></span>'
   );
 
   $("#result").html(content);
-  loadBusuanziScript();
 
   // 更新时间显示
   updateTime();
@@ -99,6 +98,9 @@ async function displayResult(ip, info) {
     clearInterval(window.timeInterval);
   }
   window.timeInterval = setInterval(updateTime, 1000);
+
+  // 延迟加载不蒜子统计
+  setTimeout(loadBusuanziScript, 1000);
 }
 
 // 更新位置信息
@@ -243,7 +245,7 @@ function updateTime() {
   const utc = new Date(utcTime);
   $("#utcTime").text(formatDate(utc));
 
-  // 美���时间 (UTC-4/UTC-5)
+  // 美东时间 (UTC-4/UTC-5)
   const usOffset = isDST() ? -4 : -5;
   const usTime = new Date(utcTime + usOffset * 3600000);
   $("#usTime").text(formatDate(usTime));
