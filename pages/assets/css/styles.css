@@ -1,15 +1,6 @@
-/* 全局字体设置 */
-@font-face {
-    font-family: 'HYYakuHei';
-    src: url('//cdn.repository.webfont.com/webfonts/nomal/151334/47018/6579f0a8f629d803d0a5a97e.gif') format('gif'),
-        url('//cdn.repository.webfont.com/webfonts/nomal/151334/47018/6579f0a8f629d803d0a5a97e.eot') format('eot'),
-        url('//cdn.repository.webfont.com/webfonts/nomal/151334/47018/6579f0a8f629d803d0a5a97e.woff2') format('woff2'),
-        url('//cdn.repository.webfont.com/webfonts/nomal/151334/47018/6579f0a8f629d803d0a5a97e.woff') format('woff');
-    font-display: swap;
-}
-
+/* 全局样式 */
 body {
-    font-family: 'HYYakuHei', -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    font-family: "FZYASH_REGULAR", -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
     margin: 0;
