@@ -1,141 +1,123 @@
+/* 全局字体设置 */
+@font-face {
+    font-family: 'HYYakuHei';
+    src: url('//cdn.repository.webfont.com/webfonts/nomal/151334/47018/6579f0a8f629d803d0a5a97e.gif') format('gif'),
+        url('//cdn.repository.webfont.com/webfonts/nomal/151334/47018/6579f0a8f629d803d0a5a97e.eot') format('eot'),
+        url('//cdn.repository.webfont.com/webfonts/nomal/151334/47018/6579f0a8f629d803d0a5a97e.woff2') format('woff2'),
+        url('//cdn.repository.webfont.com/webfonts/nomal/151334/47018/6579f0a8f629d803d0a5a97e.woff') format('woff');
+    font-display: swap;
+}
+
 body {
-    background-color: #f0f5f9;
-    background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4"%3E%3Cpath fill="%239C92AC" fill-opacity="0.1" d="M1 3h1v1H1V3zm2-2h1v1H3V1z"%3E%3C/path%3E%3C/svg%3E');
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    font-family: 'HYYakuHei', -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 20px;
+    color: #ffffff;
 }
 
 .container {
     max-width: 800px;
-    padding: 0;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
+    margin: 0 auto;
 }
 
 .card {
-    width: 100%;
-    border-radius: 20px !important;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
     overflow: hidden;
+    margin-top: 20px;
 }
 
 .card-header {
-    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-    color: white;
-    border-radius: 20px 20px 0 0 !important;
-    padding: 12px 18px;
+    padding: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.card-header h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 500;
 }
 
 .card-body {
-    padding: 0 15px !important;
+    padding: 20px;
 }
 
 .info-row {
     display: flex;
-    justify-content: space-between;
-    padding: 6px 15px !important;
-    border-bottom: 1px solid #e0e0e0;
-    font-size: 1.05rem;
-    margin: 0 !important;
     align-items: center;
-}
-
-.info-row:first-child {
-    padding-top: 6px !important;
-    margin-top: 0 !important;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .info-row:last-child {
-    padding-bottom: 6px !important;
-    margin-bottom: 0 !important;
     border-bottom: none;
 }
 
-.info-row:hover {
-    background-color: #f8f9fa;
-}
-
 .info-label {
-    font-weight: 500;
-    color: #495057;
-    margin-right: 10px;
-    flex-shrink: 0;
-    text-align: left;
+    flex: 0 0 120px;
+    color: rgba(255, 255, 255, 0.8);
 }
 
 .info-value {
-    color: #6c757d;
-    font-weight: 600;
-    text-align: right;
-    flex-shrink: 0;
+    flex: 1;
+    position: relative;
+    cursor: pointer;
+    padding-right: 20px;
 }
 
-.ip-value {
-    cursor: pointer;
-    position: relative;
-    font-weight: 700;
+.info-value:hover {
+    color: #4CAF50;
 }
 
 .copy-tooltip {
     position: absolute;
-    top: -25px;
-    right: 0;
-    background: rgba(0, 0, 0, 0.7);
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
     color: white;
-    padding: 4px 8px;
-    border-radius: 4px;
+    padding: 5px 10px;
+    border-radius: 5px;
     font-size: 12px;
     display: none;
 }
 
-.copyable-value {
-    cursor: pointer;
-    position: relative;
-}
-
-h1 {
-    font-size: 2rem;
-    margin: 0;
-    font-weight: 600;
-}
-
 .loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
     text-align: center;
-    padding: 0 20px;
-    color: #6c757d;
+    color: rgba(255, 255, 255, 0.8);
 }
 
-.spinner-border {
-    width: 2rem;
-    height: 2rem;
+.ip-value {
+    font-weight: bold;
+    color: #4CAF50;
 }
 
-@media (max-width: 768px) {
-    .container {
-        padding: 15px;
-        align-items: flex-start;
-    }
+#searchBox {
+    margin-top: 10px;
+}
 
-    .card {
-        margin: 10px 0;
-    }
+#ipInput {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    outline: none;
+}
 
-    .info-row {
-        font-size: 0.85rem;
-        padding: 8px 15px !important;
-    }
+#ipInput::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
 
-    .info-value {
-        min-width: 140px;
-        max-width: 50%;
-    }
-
-    .info-label {
-        flex: 1;
-        margin-right: 5px;
-        text-align: left;
-    }
+#ipInput:focus {
+    border-color: rgba(255, 255, 255, 0.5);
 }
