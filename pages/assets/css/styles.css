@@ -1,3 +1,10 @@
+/* 添加钉钉进步体字体声明 */
+@font-face {
+    font-family: 'DingTalk';
+    src: url('https://at.alicdn.com/wf/webfont/L1WyLWKQzuVe/jinbuti.woff2') format('woff2');
+    font-display: swap;
+}
+
 body {
     background-color: #f0f5f9;
     background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4"%3E%3Cpath fill="%239C92AC" fill-opacity="0.1" d="M1 3h1v1H1V3zm2-2h1v1H3V1z"%3E%3C/path%3E%3C/svg%3E');
@@ -5,7 +12,7 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    font-family: "DingTalk", "Microsoft YaHei", sans-serif;
 }
 
 .container {
@@ -64,6 +71,7 @@ body {
     margin-right: 10px;
     flex-shrink: 0;
     text-align: left;
+    font-family: "DingTalk", "Microsoft YaHei", sans-serif;
 }
 
 .info-value {
@@ -71,6 +79,7 @@ body {
     font-weight: 600;
     text-align: right;
     flex-shrink: 0;
+    font-family: "DingTalk", "Microsoft YaHei", sans-serif;
 }
 
 .ip-value {
@@ -100,6 +109,7 @@ h1 {
     font-size: 2rem;
     margin: 0;
     font-weight: 600;
+    font-family: "DingTalk", "Microsoft YaHei", sans-serif;
 }
 
 .loading {
