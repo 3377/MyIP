@@ -1,6 +1,6 @@
 /* 在线链接服务仅供平台体验和调试使用，平台不承诺服务的稳定性，企业客户需下载字体包自行发布使用并做好备份。 */
 @font-face {
-    font-family: "钉钉进步体";
+    font-family: "钉钉进步体 Regular";
     src: url("//at.alicdn.com/wf/webfont/3d4ClBTz1cYr/joaSMPJbFDaR.woff2") format("woff2"),
         url("//at.alicdn.com/wf/webfont/3d4ClBTz1cYr/RuWZyg7d2F8g.woff") format("woff");
     font-weight: normal;
@@ -10,7 +10,7 @@
 
 /* 覆盖 Bootstrap 默认变量 */
 :root {
-    --bs-body-font-family: "钉钉进步体", -apple-system, "Microsoft YaHei", sans-serif;
+    --bs-body-font-family: "钉钉进步体 Regular", "Noto Sans SC", system-ui, -apple-system, sans-serif;
     --bs-body-bg: #f0f5f9;
     --bs-body-color: #212529;
 }
@@ -28,7 +28,7 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    font-family: "钉钉进步体", "Microsoft YaHei", sans-serif;
+    font-family: "钉钉进步体 Regular", "Noto Sans SC", system-ui, -apple-system, sans-serif;
 }
 
 .container {
@@ -37,7 +37,6 @@ body {
     min-height: 100vh;
     display: flex;
     align-items: center;
-    font-family: "钉钉进步体", "Microsoft YaHei", sans-serif;
 }
 
 .info-label {
@@ -46,7 +45,6 @@ body {
     margin-right: 10px;
     flex-shrink: 0;
     text-align: left;
-    font-family: "钉钉进步体", "Microsoft YaHei", sans-serif;
 }
 
 .info-value {
@@ -54,14 +52,12 @@ body {
     font-weight: 600;
     text-align: right;
     flex-shrink: 0;
-    font-family: "钉钉进步体", "Microsoft YaHei", sans-serif;
 }
 
 h1 {
     font-size: 2rem;
     margin: 0;
     font-weight: 600;
-    font-family: "钉钉进步体", "Microsoft YaHei", sans-serif;
 }
 
 .card {
