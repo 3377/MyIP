@@ -10,7 +10,7 @@
 
 /* 覆盖 Bootstrap 默认变量 */
 :root {
-    --bs-body-font-family: "钉钉进步体 Regular", "Noto Sans SC", system-ui, -apple-system, sans-serif;
+    --bs-body-font-family: "DingTalk JinBuTi", "Noto Sans SC", system-ui, -apple-system, sans-serif;
     --bs-body-bg: #f0f5f9;
     --bs-body-color: #212529;
     --bs-body-font-weight: 400;
@@ -28,7 +28,7 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    font-family: "钉钉进步体 Regular" !important;
+    font-family: "DingTalk JinBuTi", "Noto Sans SC", system-ui, -apple-system, sans-serif !important;
     font-weight: 400;
 }
 
@@ -38,7 +38,7 @@ body {
     min-height: 100vh;
     display: flex;
     align-items: center;
-    font-family: "钉钉进步体 Regular" !important;
+    font-family: "DingTalk JinBuTi", "Noto Sans SC", system-ui, -apple-system, sans-serif !important;
 }
 
 .info-label {
@@ -47,7 +47,7 @@ body {
     margin-right: 10px;
     flex-shrink: 0;
     text-align: left;
-    font-family: "钉钉进步体 Regular" !important;
+    font-family: "DingTalk JinBuTi", "Noto Sans SC", system-ui, -apple-system, sans-serif !important;
 }
 
 .info-value {
@@ -55,14 +55,14 @@ body {
     font-weight: 600;
     text-align: right;
     flex-shrink: 0;
-    font-family: "钉钉进步体 Regular" !important;
+    font-family: "DingTalk JinBuTi", "Noto Sans SC", system-ui, -apple-system, sans-serif !important;
 }
 
 h1 {
     font-size: 2rem;
     margin: 0;
     font-weight: 600;
-    font-family: "钉钉进步体 Regular" !important;
+    font-family: "DingTalk JinBuTi", "Noto Sans SC", system-ui, -apple-system, sans-serif !important;
 }
 
 .card {
