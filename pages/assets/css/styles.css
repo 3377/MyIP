@@ -69,6 +69,12 @@ h1 {
     width: 100%;
     border-radius: 20px !important;
     overflow: hidden;
+    background: rgba(255, 255, 255, 0.9) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    transform: translateZ(0);
 }
 
 .card-header {
@@ -76,20 +82,25 @@ h1 {
     color: white;
     border-radius: 20px 20px 0 0 !important;
     padding: 12px 18px;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.18);
 }
 
 .card-body {
     padding: 0 15px !important;
+    background: rgba(255, 255, 255, 0.7);
 }
 
 .info-row {
     display: flex;
     justify-content: space-between;
     padding: 6px 15px !important;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid rgba(224, 224, 224, 0.5);
     font-size: 1.05rem;
     margin: 0 !important;
     align-items: center;
+    transition: background-color 0.3s ease;
 }
 
 .info-row:first-child {
@@ -104,7 +115,7 @@ h1 {
 }
 
 .info-row:hover {
-    background-color: #f8f9fa;
+    background-color: rgba(248, 249, 250, 0.8);
 }
 
 .ip-value {

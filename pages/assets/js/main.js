@@ -24,19 +24,35 @@ function createInfoItem(label, value) {
 
 // 加载访问统计
 function loadBusuanziScript() {
-  $.getScript(
-    "//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js",
-    function () {
-      setTimeout(function () {
-        if ($("#busuanzi_value_site_pv").text() === "") {
-          $("#busuanzi_value_site_pv").text("无法获取");
-        }
-        if ($("#busuanzi_value_site_uv").text() === "") {
-          $("#busuanzi_value_site_uv").text("无法获取");
-        }
-      }, 3000);
-    }
-  );
+  // 先移除已存在的脚本（如果有）
+  const existingScript = document.getElementById('busuanzi');
+  if (existingScript) {
+    existingScript.remove();
+  }
+
+  // 创建新的脚本标签
+  const script = document.createElement('script');
+  script.id = 'busuanzi';
+  script.async = true;
+  script.src = "//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js";
+  
+  // 添加加载完成的回调
+  script.onload = function() {
+    setTimeout(function() {
+      const pv = document.getElementById("busuanzi_value_site_pv");
+      const uv = document.getElementById("busuanzi_value_site_uv");
+      
+      if (pv && pv.innerHTML === "") {
+        pv.innerHTML = "无法获取";
+      }
+      if (uv && uv.innerHTML === "") {
+        uv.innerHTML = "无法获取";
+      }
+    }, 3000);
+  };
+
+  // 添加脚本到页面
+  document.body.appendChild(script);
 }
 
 // 显示结果
@@ -61,7 +77,7 @@ async function displayResult(ip, info) {
   content += createInfoItem("位置A", info.locationA || "正在获取...");
   content += createInfoItem("位置B", info.locationB || "正在获取...");
   content += createInfoItem("位置C", info.locationC || "正在获取...");
-  content += createInfoItem("位置D", info.locationD || "正在获取...");
+  content += createInfoItem("位置D", info.locationD || "正在获��...");
   content += createInfoItem("北京时间", '<span id="beijingTime"></span>');
   content += createInfoItem("UTC时间", '<span id="utcTime"></span>');
   content += createInfoItem("美东时间", '<span id="usTime"></span>');
@@ -227,7 +243,7 @@ function updateTime() {
   const utc = new Date(utcTime);
   $("#utcTime").text(formatDate(utc));
 
-  // 美东时间 (UTC-4/UTC-5)
+  // 美���时间 (UTC-4/UTC-5)
   const usOffset = isDST() ? -4 : -5;
   const usTime = new Date(utcTime + usOffset * 3600000);
   $("#usTime").text(formatDate(usTime));
