@@ -20,37 +20,59 @@ export async function onRequest(context) {
   // 检查是否是允许的IP
   const isAllowedIP = allowedIPs.includes(clientIP);
 
-  // 如��不是内部请求且不是允许的IP或域名，检查访问次数
+  // 如果不是内部请求且不是允许的IP或域名，检查访问次数
   if (!isInternalRequest && !isAllowedIP && !isAllowedDomain) {
     try {
       const namespace = context.env.IP_ACCESS_KV;
-      let accessCount = 0;
+      
+      // 检查 KV 绑定是否存在
+      if (!namespace) {
+        console.error('KV 命名空间未绑定');
+        return new Response(JSON.stringify({
+          success: false,
+          message: 'API 访问控制未正确配置'
+        }), {
+          headers: {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-store',
+            'Access-Control-Allow-Origin': '*'
+          }
+        });
+      }
 
-      if (namespace) {
-        const stored = await namespace.get(clientIP);
-        if (stored) {
-          accessCount = parseInt(stored);
-        }
+      let accessCount = 0;
+      const stored = await namespace.get(clientIP);
+      
+      console.log('当前IP:', clientIP);
+      console.log('存储的访问次数:', stored);
+
+      if (stored) {
+        accessCount = parseInt(stored);
+        console.log('解析后的访问次数:', accessCount);
       }
 
       // 增加访问次数
       accessCount++;
+      console.log('新的访问次数:', accessCount);
 
       // 如果访问次数超过3次，返回未授权信息
       if (accessCount > 3) {
-        if (namespace) {
-          try {
-            await namespace.put(clientIP, accessCount.toString(), {
-              expirationTtl: 86400 // 24小时后过期
-            });
-          } catch (error) {
-            console.error('更新KV访问次数失败:', error);
-          }
+        try {
+          const putResult = await namespace.put(clientIP, accessCount.toString(), {
+            expirationTtl: 86400 // 24小时后过期
+          });
+          console.log('KV写入结果（超限）:', putResult);
+        } catch (kvError) {
+          console.error('KV写入失败（超限）:', kvError);
         }
 
         return new Response(JSON.stringify({
           success: false,
-          message: '您未授权使用此API，需要使用请联系QQ35794406'
+          message: '您未授权使用此API，需要使用请联系QQ35794406',
+          debug: {
+            ip: clientIP,
+            accessCount: accessCount
+          }
         }), {
           headers: {
             'Content-Type': 'application/json',
@@ -61,18 +83,26 @@ export async function onRequest(context) {
       }
 
       // 更新访问次数
-      if (namespace) {
-        try {
-          await namespace.put(clientIP, accessCount.toString(), {
-            expirationTtl: 86400 // 24小时后过期
-          });
-        } catch (error) {
-          console.error('更新访问次数失败:', error);
-        }
+      try {
+        const putResult = await namespace.put(clientIP, accessCount.toString(), {
+          expirationTtl: 86400 // 24小时后过期
+        });
+        console.log('KV写入结果:', putResult);
+      } catch (kvError) {
+        console.error('KV写入失败:', kvError);
+        // 即使 KV 写入失败，也继续处理请求
       }
     } catch (error) {
       console.error('访问控制处理失败:', error);
+      // 即使访问控制失败，也继续处理请求
     }
+  } else {
+    console.log('请求已授权:', {
+      isInternalRequest,
+      isAllowedIP,
+      isAllowedDomain,
+      clientIP
+    });
   }
 
   const { searchParams } = new URL(context.request.url);
