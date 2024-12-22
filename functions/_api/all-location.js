@@ -20,25 +20,16 @@ export async function onRequest(context) {
   // 检查是否是允许的IP
   const isAllowedIP = allowedIPs.includes(clientIP);
 
-  // 如果不是内部请求且不是允许的IP或域名，检查访问次数
+  // 如��不是内部请求且不是允许的IP或域名，检查访问次数
   if (!isInternalRequest && !isAllowedIP && !isAllowedDomain) {
-    // 使用 Cache API 获取临时访问记录
-    const cacheKey = `access_count:${clientIP}`;
-    const cache = caches.default;
-    let accessCount = 0;
-
     try {
-      const cacheResponse = await cache.match(cacheKey);
-      if (cacheResponse) {
-        accessCount = parseInt(await cacheResponse.text());
-      } else {
-        // 如果缓存中没有，检查 KV
-        const namespace = context.env.IP_ACCESS_KV;
-        if (namespace) {
-          const stored = await namespace.get(clientIP);
-          if (stored) {
-            accessCount = parseInt(stored);
-          }
+      const namespace = context.env.IP_ACCESS_KV;
+      let accessCount = 0;
+
+      if (namespace) {
+        const stored = await namespace.get(clientIP);
+        if (stored) {
+          accessCount = parseInt(stored);
         }
       }
 
@@ -47,10 +38,9 @@ export async function onRequest(context) {
 
       // 如果访问次数超过3次，返回未授权信息
       if (accessCount > 3) {
-        // 将超过限制的IP存入KV
-        if (context.env.IP_ACCESS_KV) {
+        if (namespace) {
           try {
-            await context.env.IP_ACCESS_KV.put(clientIP, accessCount.toString(), {
+            await namespace.put(clientIP, accessCount.toString(), {
               expirationTtl: 86400 // 24小时后过期
             });
           } catch (error) {
@@ -70,16 +60,16 @@ export async function onRequest(context) {
         });
       }
 
-      // 更新缓存中的访问次数（3次以内）
-      const cacheResponse = new Response(accessCount.toString());
-      const cacheOptions = {
-        expirationTtl: 86400, // 24小时后过期
-        headers: {
-          'Cache-Control': 'public, max-age=86400'
+      // 更新访问次数
+      if (namespace) {
+        try {
+          await namespace.put(clientIP, accessCount.toString(), {
+            expirationTtl: 86400 // 24小时后过期
+          });
+        } catch (error) {
+          console.error('更新访问次数失败:', error);
         }
-      };
-      await cache.put(cacheKey, cacheResponse.clone());
-
+      }
     } catch (error) {
       console.error('访问控制处理失败:', error);
     }
@@ -209,7 +199,7 @@ export async function onRequest(context) {
   } catch (error) {
     return new Response(JSON.stringify({
       success: false,
-      message: error.message
+      message: error.message || '服务器内部错误'
     }), {
       headers: {
         'Content-Type': 'application/json',
