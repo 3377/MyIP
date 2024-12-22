@@ -24,35 +24,19 @@ function createInfoItem(label, value) {
 
 // 加载访问统计
 function loadBusuanziScript() {
-  // 移除旧的脚本
-  const oldScript = document.getElementById('busuanzi_script');
-  if (oldScript) {
-    oldScript.remove();
-  }
-
-  // 创建新的脚本
-  const script = document.createElement('script');
-  script.id = 'busuanzi_script';
-  script.async = true;
-  script.src = '//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js';
-  
-  script.onload = function() {
-    // 显示统计容器
-    $('#busuanzi_container_site_pv, #busuanzi_container_site_uv').css('display', 'inline');
-    
-    // 检查统计值
-    setTimeout(function() {
-      if ($('#busuanzi_value_site_pv').text() === '') {
-        $('#busuanzi_value_site_pv').text('无法获取');
-      }
-      if ($('#busuanzi_value_site_uv').text() === '') {
-        $('#busuanzi_value_site_uv').text('无法获取');
-      }
-    }, 3000);
-  };
-
-  // 添加到页面头部而不是body
-  document.head.appendChild(script);
+  $.getScript(
+    "//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js",
+    function () {
+      setTimeout(function () {
+        if ($("#busuanzi_value_site_pv").text() === "") {
+          $("#busuanzi_value_site_pv").text("无法获取");
+        }
+        if ($("#busuanzi_value_site_uv").text() === "") {
+          $("#busuanzi_value_site_uv").text("无法获取");
+        }
+      }, 3000);
+    }
+  );
 }
 
 // 显示结果
@@ -83,14 +67,15 @@ async function displayResult(ip, info) {
   content += createInfoItem("美东时间", '<span id="usTime"></span>');
   content += createInfoItem(
     "访问总数",
-    '<span id="busuanzi_container_site_pv" style="display: none"><span id="busuanzi_value_site_pv">-</span></span>'
+    '<span id="busuanzi_value_site_pv">-</span>'
   );
   content += createInfoItem(
     "访客总数",
-    '<span id="busuanzi_container_site_uv" style="display: none"><span id="busuanzi_value_site_uv">-</span></span>'
+    '<span id="busuanzi_value_site_uv">-</span>'
   );
 
   $("#result").html(content);
+  loadBusuanziScript();
 
   // 更新时间显示
   updateTime();
@@ -98,9 +83,6 @@ async function displayResult(ip, info) {
     clearInterval(window.timeInterval);
   }
   window.timeInterval = setInterval(updateTime, 1000);
-
-  // 延迟加载不蒜子统计
-  setTimeout(loadBusuanziScript, 1000);
 }
 
 // 更新位置信息
