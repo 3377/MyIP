@@ -1,13 +1,3 @@
-/* 在线链接服务仅供平台体验和调试使用，平台不承诺服务的稳定性，企业客户需下载字体包自行发布使用并做好备份。 */
-@font-face {
-    font-family: "钉钉进步体 Regular";
-    src: url("//at.alicdn.com/wf/webfont/3d4ClBTz1cYr/joaSMPJbFDaR.woff2") format("woff2"),
-        url("//at.alicdn.com/wf/webfont/3d4ClBTz1cYr/RuWZyg7d2F8g.woff") format("woff");
-    font-weight: 400;
-    font-style: normal;
-    font-display: block;
-}
-
 /* 覆盖 Bootstrap 默认变量 */
 :root {
     --bs-body-font-family: "DingTalk JinBuTi", "Noto Sans SC", system-ui, -apple-system, sans-serif;
