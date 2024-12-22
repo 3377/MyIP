@@ -3,9 +3,9 @@
     font-family: "钉钉进步体 Regular";
     src: url("//at.alicdn.com/wf/webfont/3d4ClBTz1cYr/joaSMPJbFDaR.woff2") format("woff2"),
         url("//at.alicdn.com/wf/webfont/3d4ClBTz1cYr/RuWZyg7d2F8g.woff") format("woff");
-    font-weight: normal;
+    font-weight: 400;
     font-style: normal;
-    font-display: swap;
+    font-display: block;
 }
 
 /* 覆盖 Bootstrap 默认变量 */
@@ -13,12 +13,12 @@
     --bs-body-font-family: "钉钉进步体 Regular", "Noto Sans SC", system-ui, -apple-system, sans-serif;
     --bs-body-bg: #f0f5f9;
     --bs-body-color: #212529;
+    --bs-body-font-weight: 400;
 }
 
 /* 重置基础样式 */
 * {
     -webkit-text-size-adjust: 100% !important;
-    font-family: var(--bs-body-font-family) !important;
 }
 
 body {
@@ -28,7 +28,8 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    font-family: "钉钉进步体 Regular", "Noto Sans SC", system-ui, -apple-system, sans-serif;
+    font-family: "钉钉进步体 Regular" !important;
+    font-weight: 400;
 }
 
 .container {
@@ -37,6 +38,7 @@ body {
     min-height: 100vh;
     display: flex;
     align-items: center;
+    font-family: "钉钉进步体 Regular" !important;
 }
 
 .info-label {
@@ -45,6 +47,7 @@ body {
     margin-right: 10px;
     flex-shrink: 0;
     text-align: left;
+    font-family: "钉钉进步体 Regular" !important;
 }
 
 .info-value {
@@ -52,12 +55,14 @@ body {
     font-weight: 600;
     text-align: right;
     flex-shrink: 0;
+    font-family: "钉钉进步体 Regular" !important;
 }
 
 h1 {
     font-size: 2rem;
     margin: 0;
     font-weight: 600;
+    font-family: "钉钉进步体 Regular" !important;
 }
 
 .card {
