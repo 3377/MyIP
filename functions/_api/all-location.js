@@ -109,7 +109,7 @@ export async function onRequest(context) {
   try {
     // 1. 获取美团经纬度
     const mtLocResponse = await fetch(
-      `https://apimobile.meituan.com/locate/v2/ip/loc?client_source=yourAppKey&rgeo=true&ip=https://apimobile.meituan.com/locate/v2/ip/loc?client_source=yourAppKey&rgeo=true&ip=${ip}`
+      `https://apimobile.meituan.com/locate/v2/ip/loc?client_source=yourAppKey&rgeo=true&ip=${ip}`
     );
     const mtLocData = await mtLocResponse.json();
 
