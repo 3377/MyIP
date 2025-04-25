@@ -1,44 +1,36 @@
 /* 主题变量 */
 :root {
     /* 亮色主题变量 - 3D灰色蜂巢 */
-    --light-bg-color-1: #8a9baf;
-    /* 更暗的主色调 */
-    --light-bg-color-2: #b2c1d2;
-    /* 轻微调暗的次色调 */
-    --light-bg-color-3: #6d7e92;
-    /* 明显更暗的边缘色 */
-    --light-bg-base: #d5dde8;
-    /* 更深的基础背景色 */
+    --light-bg-color-1: #59708a;
+    /* 更加深主色，增强对比度 */
+    --light-bg-color-2: #92a7be;
+    /* 调整次色，增强对比度 */
+    --light-bg-color-3: #455b75;
+    /* 深边缘色，提高可见度 */
+    --light-bg-base: #e6edf5;
 
-    /* 3D灰色蜂巢背景 */
+    /* 3D灰色蜂巢背景 - 增强对比度 */
     --light-bg-pattern:
-        /* 蜂巢结构 - 增强边缘对比度 */
+        /* 蜂巢结构 - 强化边界和内部色差 */
         radial-gradient(circle farthest-side at 0% 50%, var(--light-bg-color-2) 23.5%, rgba(0, 0, 0, 0) 0)21px 30px,
         radial-gradient(circle farthest-side at 0% 50%, var(--light-bg-color-3) 24%, rgba(0, 0, 0, 0) 0)19px 30px,
         linear-gradient(var(--light-bg-color-2) 14%, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 85%, var(--light-bg-color-2) 0)0 0,
         linear-gradient(150deg, var(--light-bg-color-2) 24%, var(--light-bg-color-1) 0, var(--light-bg-color-1) 26%, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 74%, var(--light-bg-color-1) 0, var(--light-bg-color-1) 76%, var(--light-bg-color-2) 0)0 0,
         linear-gradient(30deg, var(--light-bg-color-2) 24%, var(--light-bg-color-1) 0, var(--light-bg-color-1) 26%, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 74%, var(--light-bg-color-1) 0, var(--light-bg-color-1) 76%, var(--light-bg-color-2) 0)0 0,
-        linear-gradient(90deg, var(--light-bg-color-3) 2%, var(--light-bg-color-2) 0, var(--light-bg-color-2) 98%, var(--light-bg-color-3) 0%)0 0,
-        /* 添加蜂巢内部纹理 */
-        repeating-linear-gradient(30deg, rgba(255, 255, 255, 0.06) 0px, rgba(255, 255, 255, 0.06) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 2px),
-        repeating-linear-gradient(150deg, rgba(255, 255, 255, 0.06) 0px, rgba(255, 255, 255, 0.06) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 2px),
-        repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.01) 0px, rgba(0, 0, 0, 0.01) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 4px) var(--light-bg-base);
-    --light-bg-size: 40px 60px;
+        linear-gradient(90deg, var(--light-bg-color-3) 2%, var(--light-bg-color-2) 0, var(--light-bg-color-2) 98%, var(--light-bg-color-3) 0%)0 0 var(--light-bg-base);
+    --light-bg-size: 36px 54px;
+    /* 缩小蜂巢尺寸，增加密度 */
+    /* 稍微缩小蜂巢尺寸，增加密度 */
 
-    /* 3D增强效果叠加层 - 加强立体效果 */
+    /* 3D增强效果叠加层 - 增强立体感和阴影 */
     --light-bg-3d-effect:
-        /* 主光源高光 */
-        linear-gradient(45deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0) 70%),
-        /* 细微纹理 - 增强立体感 */
-        repeating-linear-gradient(63deg, rgba(255, 255, 255, 0.15) 0px, rgba(255, 255, 255, 0.15) 1px, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0) 4px),
-        repeating-linear-gradient(117deg, rgba(0, 0, 0, 0.07) 0px, rgba(0, 0, 0, 0.07) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 4px),
-        /* 微妙的噪点纹理 */
-        url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E"),
-        /* 整体渐变覆盖 - 增强深度 */
-        linear-gradient(135deg, rgba(194, 218, 245, 0.85) 0%, rgba(103, 127, 154, 0.5) 100%);
-    --light-bg-3d-size: 200% 200%, 200% 200%, 200% 200%, 200px 200px, 200% 200%;
+        linear-gradient(45deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 70%),
+        repeating-linear-gradient(63deg, rgba(255, 255, 255, 0.18) 0px, rgba(255, 255, 255, 0.18) 1px, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0) 4px),
+        repeating-linear-gradient(117deg, rgba(0, 0, 0, 0.12) 0px, rgba(0, 0, 0, 0.12) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 4px),
+        linear-gradient(135deg, rgba(180, 210, 240, 0.97) 0%, rgba(100, 128, 160, 0.8) 100%);
+    --light-bg-3d-size: 200% 200%;
 
-    --light-card-bg: rgba(255, 255, 255, 0.85);
+    --light-card-bg: rgba(255, 255, 255, 0.8);
     --light-card-header-bg: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
     --light-card-header-color: white;
     --light-label-color: #495057;
@@ -59,11 +51,7 @@
         linear-gradient(var(--dark-bg-color-2) 14%, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 85%, var(--dark-bg-color-2) 0)0 0,
         linear-gradient(150deg, var(--dark-bg-color-2) 24%, var(--dark-bg-color-1) 0, var(--dark-bg-color-1) 26%, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 74%, var(--dark-bg-color-1) 0, var(--dark-bg-color-1) 76%, var(--dark-bg-color-2) 0)0 0,
         linear-gradient(30deg, var(--dark-bg-color-2) 24%, var(--dark-bg-color-1) 0, var(--dark-bg-color-1) 26%, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 74%, var(--dark-bg-color-1) 0, var(--dark-bg-color-1) 76%, var(--dark-bg-color-2) 0)0 0,
-        linear-gradient(90deg, var(--dark-bg-color-1) 2%, var(--dark-bg-color-2) 0, var(--dark-bg-color-2) 98%, var(--dark-bg-color-1) 0%)0 0,
-        /* 添加蜂巢内部纹理 */
-        repeating-linear-gradient(30deg, rgba(255, 255, 255, 0.015) 0px, rgba(255, 255, 255, 0.015) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 2px),
-        repeating-linear-gradient(150deg, rgba(255, 255, 255, 0.015) 0px, rgba(255, 255, 255, 0.015) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 2px),
-        repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.03) 0px, rgba(0, 0, 0, 0.03) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 4px) var(--dark-bg-base);
+        linear-gradient(90deg, var(--dark-bg-color-1) 2%, var(--dark-bg-color-2) 0, var(--dark-bg-color-2) 98%, var(--dark-bg-color-1) 0%)0 0 var(--dark-bg-base);
     --dark-bg-size: 40px 60px;
 
     /* 3D增强效果叠加层-暗色 */
@@ -71,9 +59,8 @@
         linear-gradient(45deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0) 70%),
         repeating-linear-gradient(63deg, rgba(255, 255, 255, 0.05) 0px, rgba(255, 255, 255, 0.05) 1px, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0) 4px),
         repeating-linear-gradient(117deg, rgba(0, 0, 0, 0.08) 0px, rgba(0, 0, 0, 0.08) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 4px),
-        url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E"),
         linear-gradient(135deg, rgba(11, 34, 74, 0.9) 0%, rgba(4, 27, 65, 0.7) 100%);
-    --dark-bg-3d-size: 200% 200%, 200% 200%, 200% 200%, 200px 200px, 200% 200%;
+    --dark-bg-3d-size: 200% 200%;
 
     --dark-card-bg: rgba(55, 65, 81, 0.85);
     --dark-card-header-bg: linear-gradient(135deg, #4b0082 0%, #1e62c9 100%);
@@ -146,19 +133,24 @@ body {
     font-family: "DingTalk JinBuTi", "Noto Sans SC", system-ui, -apple-system, sans-serif;
     font-weight: 400;
     transition: background 0.3s ease;
-    /* 添加微妙的背景动画效果增强3D感 */
-    animation: subtleShift 60s ease-in-out infinite alternate;
+    position: relative;
 }
 
-/* 添加微妙的背景动画 */
-@keyframes subtleShift {
-    0% {
-        background-position: 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%;
-    }
-
-    100% {
-        background-position: 40px 60px, 15px 25px, -15px -25px, 0% 0%, 0% 100%;
-    }
+/* 亮色模式下的额外蜂巢边框增强 */
+body:not([data-theme="dark"])::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background:
+        repeating-linear-gradient(60deg, rgba(0, 0, 0, 0.04) 0px, rgba(0, 0, 0, 0.04) 1px, transparent 1px, transparent 4px),
+        repeating-linear-gradient(120deg, rgba(0, 0, 0, 0.04) 0px, rgba(0, 0, 0, 0.04) 1px, transparent 1px, transparent 4px),
+        repeating-radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.03) 0%, rgba(0, 0, 0, 0.03) 1%, transparent 1%, transparent 2%);
+    background-size: 40px 40px, 40px 40px, 100px 100px;
+    pointer-events: none;
+    z-index: 0;
 }
 
 .container {
@@ -167,6 +159,8 @@ body {
     min-height: 100vh;
     display: flex;
     align-items: center;
+    position: relative;
+    z-index: 1;
 }
 
 .info-label {
