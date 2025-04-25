@@ -1,14 +1,25 @@
 /* 主题变量 */
 :root {
     /* 亮色主题变量 */
-    --light-bg-color-1: #d8e3f0;
-    --light-bg-color-2: #e8edf2;
-    --light-bg-pattern: radial-gradient(circle farthest-side at 0% 50%, var(--light-bg-color-2) 23.5%, rgba(240, 166, 17, 0) 0)21px 30px,
+    --light-bg-color-1: #b0c4d8;
+    /* 较深的蓝灰色 */
+    --light-bg-color-2: #d2dbe6;
+    /* 中等蓝灰色 */
+
+    /* 蜂巢纹理装饰（微小点） */
+    --light-texture: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6' viewBox='0 0 6 6'%3E%3Ccircle cx='3' cy='3' r='0.6' fill='%23728ca8' fill-opacity='0.3'/%3E%3C/svg%3E");
+
+    /* 蜂巢背景图案 - 增强对比度和添加内部纹理点缀 */
+    --light-bg-pattern:
+        /* 蜂巢网格结构 */
+        radial-gradient(circle farthest-side at 0% 50%, var(--light-bg-color-2) 23.5%, rgba(240, 166, 17, 0) 0)21px 30px,
         radial-gradient(circle farthest-side at 0% 50%, var(--light-bg-color-1) 24%, rgba(240, 166, 17, 0) 0)19px 30px,
         linear-gradient(var(--light-bg-color-2) 14%, rgba(240, 166, 17, 0) 0, rgba(240, 166, 17, 0) 85%, var(--light-bg-color-2) 0)0 0,
         linear-gradient(150deg, var(--light-bg-color-2) 24%, var(--light-bg-color-1) 0, var(--light-bg-color-1) 26%, rgba(240, 166, 17, 0) 0, rgba(240, 166, 17, 0) 74%, var(--light-bg-color-1) 0, var(--light-bg-color-1) 76%, var(--light-bg-color-2) 0)0 0,
         linear-gradient(30deg, var(--light-bg-color-2) 24%, var(--light-bg-color-1) 0, var(--light-bg-color-1) 26%, rgba(240, 166, 17, 0) 0, rgba(240, 166, 17, 0) 74%, var(--light-bg-color-1) 0, var(--light-bg-color-1) 76%, var(--light-bg-color-2) 0)0 0,
-        linear-gradient(90deg, var(--light-bg-color-1) 2%, var(--light-bg-color-2) 0, var(--light-bg-color-2) 98%, var(--light-bg-color-1) 0%)0 0 var(--light-bg-color-2);
+        linear-gradient(90deg, var(--light-bg-color-1) 2%, var(--light-bg-color-2) 0, var(--light-bg-color-2) 98%, var(--light-bg-color-1) 0%)0 0,
+        /* 增加微妙的阴影效果 */
+        linear-gradient(var(--light-bg-color-1) 0%, var(--light-bg-color-2) 100%);
     --light-bg-size: 40px 60px;
 
     --light-card-bg: rgba(255, 255, 255, 0.85);
@@ -23,12 +34,20 @@
     /* 暗色主题变量 - 蜂巢深蓝风格 */
     --dark-bg-color-1: #041b41;
     --dark-bg-color-2: #0b224a;
-    --dark-bg-pattern: radial-gradient(circle farthest-side at 0% 50%, var(--dark-bg-color-2) 23.5%, rgba(240, 166, 17, 0) 0)21px 30px,
+
+    /* 暗色主题蜂巢内部纹理 */
+    --dark-texture: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6' viewBox='0 0 6 6'%3E%3Ccircle cx='3' cy='3' r='0.6' fill='%23ffffff' fill-opacity='0.15'/%3E%3C/svg%3E");
+
+    --dark-bg-pattern:
+        /* 蜂巢网格结构 */
+        radial-gradient(circle farthest-side at 0% 50%, var(--dark-bg-color-2) 23.5%, rgba(240, 166, 17, 0) 0)21px 30px,
         radial-gradient(circle farthest-side at 0% 50%, var(--dark-bg-color-1) 24%, rgba(240, 166, 17, 0) 0)19px 30px,
         linear-gradient(var(--dark-bg-color-2) 14%, rgba(240, 166, 17, 0) 0, rgba(240, 166, 17, 0) 85%, var(--dark-bg-color-2) 0)0 0,
         linear-gradient(150deg, var(--dark-bg-color-2) 24%, var(--dark-bg-color-1) 0, var(--dark-bg-color-1) 26%, rgba(240, 166, 17, 0) 0, rgba(240, 166, 17, 0) 74%, var(--dark-bg-color-1) 0, var(--dark-bg-color-1) 76%, var(--dark-bg-color-2) 0)0 0,
         linear-gradient(30deg, var(--dark-bg-color-2) 24%, var(--dark-bg-color-1) 0, var(--dark-bg-color-1) 26%, rgba(240, 166, 17, 0) 0, rgba(240, 166, 17, 0) 74%, var(--dark-bg-color-1) 0, var(--dark-bg-color-1) 76%, var(--dark-bg-color-2) 0)0 0,
-        linear-gradient(90deg, var(--dark-bg-color-1) 2%, var(--dark-bg-color-2) 0, var(--dark-bg-color-2) 98%, var(--dark-bg-color-1) 0%)0 0 var(--dark-bg-color-2);
+        linear-gradient(90deg, var(--dark-bg-color-1) 2%, var(--dark-bg-color-2) 0, var(--dark-bg-color-2) 98%, var(--dark-bg-color-1) 0%)0 0,
+        /* 增加微妙的阴影效果 */
+        linear-gradient(var(--dark-bg-color-1) 0%, var(--dark-bg-color-2) 100%);
     --dark-bg-size: 40px 60px;
 
     --dark-card-bg: rgba(55, 65, 81, 0.85);
@@ -45,6 +64,7 @@
     --bg-color-2: var(--light-bg-color-2);
     --bg-pattern: var(--light-bg-pattern);
     --bg-size: var(--light-bg-size);
+    --bg-texture: var(--light-texture);
     --card-bg: var(--light-card-bg);
     --card-header-bg: var(--light-card-header-bg);
     --card-header-color: var(--light-card-header-color);
@@ -66,6 +86,7 @@
     --bg-color-2: var(--dark-bg-color-2);
     --bg-pattern: var(--dark-bg-pattern);
     --bg-size: var(--dark-bg-size);
+    --bg-texture: var(--dark-texture);
     --card-bg: var(--dark-card-bg);
     --card-header-bg: var(--dark-card-header-bg);
     --card-header-color: var(--dark-card-header-color);
@@ -87,6 +108,7 @@
 body {
     background: var(--bg-pattern);
     background-size: var(--bg-size);
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -96,12 +118,28 @@ body {
     transition: background 0.3s ease;
 }
 
+/* 添加蜂巢内部纹理点缀 */
+body::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: var(--bg-texture);
+    opacity: 1;
+    z-index: 0;
+    pointer-events: none;
+}
+
 .container {
     max-width: 800px;
     padding: 0;
     min-height: 100vh;
     display: flex;
     align-items: center;
+    position: relative;
+    z-index: 1;
 }
 
 .info-label {
@@ -134,11 +172,17 @@ h1 {
     overflow: hidden;
     background-color: var(--card-bg);
     box-shadow: var(--box-shadow);
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
     border: none;
     position: relative;
     z-index: 1;
     backdrop-filter: blur(5px);
+    transform: translateZ(0);
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--box-shadow), 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
 .card-header {
