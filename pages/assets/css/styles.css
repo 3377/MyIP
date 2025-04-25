@@ -220,11 +220,11 @@ h1 {
     bottom: 0;
     height: 2px;
     background: linear-gradient(to right,
-            transparent 5%,
-            var(--border-color) 15%,
-            var(--border-color) 85%,
-            transparent 95%);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transparent 2%,
+            var(--border-color) 8%,
+            var(--border-color) 92%,
+            transparent 98%);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 
 .info-row:last-child::after {
