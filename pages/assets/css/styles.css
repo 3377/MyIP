@@ -1,9 +1,62 @@
-/* 覆盖 Bootstrap 默认变量 */
+/* 主题变量 */
 :root {
+    /* 亮色主题变量 */
+    --light-bg-color: #f0f5f9;
+    --light-bg-pattern: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4"%3E%3Cpath fill="%239C92AC" fill-opacity="0.1" d="M1 3h1v1H1V3zm2-2h1v1H3V1z"%3E%3C/path%3E%3C/svg%3E');
+    --light-card-bg: #ffffff;
+    --light-card-header-bg: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+    --light-card-header-color: white;
+    --light-label-color: #495057;
+    --light-value-color: #6c757d;
+    --light-hover-bg: #f8f9fa;
+    --light-border-color: rgba(0, 0, 0, 0.2);
+    --light-box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+    /* 暗色主题变量 */
+    --dark-bg-color: #121212;
+    --dark-bg-pattern: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4"%3E%3Cpath fill="%23FFFFFF" fill-opacity="0.05" d="M1 3h1v1H1V3zm2-2h1v1H3V1z"%3E%3C/path%3E%3C/svg%3E');
+    --dark-card-bg: #1e1e1e;
+    --dark-card-header-bg: linear-gradient(135deg, #5a10a0 0%, #1e62c9 100%);
+    --dark-card-header-color: #e1e1e1;
+    --dark-label-color: #b0b0b0;
+    --dark-value-color: #808080;
+    --dark-hover-bg: #2c2c2c;
+    --dark-border-color: rgba(255, 255, 255, 0.15);
+    --dark-box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+
+    /* 默认使用亮色主题 */
+    --bg-color: var(--light-bg-color);
+    --bg-pattern: var(--light-bg-pattern);
+    --card-bg: var(--light-card-bg);
+    --card-header-bg: var(--light-card-header-bg);
+    --card-header-color: var(--light-card-header-color);
+    --label-color: var(--light-label-color);
+    --value-color: var(--light-value-color);
+    --hover-bg: var(--light-hover-bg);
+    --border-color: var(--light-border-color);
+    --box-shadow: var(--light-box-shadow);
+
     --bs-body-font-family: "DingTalk JinBuTi", "Noto Sans SC", system-ui, -apple-system, sans-serif;
-    --bs-body-bg: #f0f5f9;
-    --bs-body-color: #212529;
+    --bs-body-bg: var(--bg-color);
+    --bs-body-color: var(--label-color);
     --bs-body-font-weight: 400;
+}
+
+/* 暗色主题样式 */
+[data-theme="dark"] {
+    --bg-color: var(--dark-bg-color);
+    --bg-pattern: var(--dark-bg-pattern);
+    --card-bg: var(--dark-card-bg);
+    --card-header-bg: var(--dark-card-header-bg);
+    --card-header-color: var(--dark-card-header-color);
+    --label-color: var(--dark-label-color);
+    --value-color: var(--dark-value-color);
+    --hover-bg: var(--dark-hover-bg);
+    --border-color: var(--dark-border-color);
+    --box-shadow: var(--dark-box-shadow);
+
+    --bs-body-bg: var(--bg-color);
+    --bs-body-color: var(--label-color);
 }
 
 /* 重置基础样式 */
@@ -12,14 +65,15 @@
 }
 
 body {
-    background-color: #f0f5f9;
-    background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4"%3E%3Cpath fill="%239C92AC" fill-opacity="0.1" d="M1 3h1v1H1V3zm2-2h1v1H3V1z"%3E%3C/path%3E%3C/svg%3E');
+    background-color: var(--bg-color);
+    background-image: var(--bg-pattern);
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
     font-family: "DingTalk JinBuTi", "Noto Sans SC", system-ui, -apple-system, sans-serif;
     font-weight: 400;
+    transition: background-color 0.3s ease;
 }
 
 .container {
@@ -32,65 +86,86 @@ body {
 
 .info-label {
     font-weight: 400;
-    color: #495057;
+    color: var(--label-color);
     margin-right: 10px;
     flex-shrink: 0;
     text-align: left;
+    transition: color 0.3s ease;
 }
 
 .info-value {
-    color: #6c757d;
+    color: var(--value-color);
     font-weight: 400;
     text-align: right;
     flex-shrink: 0;
+    transition: color 0.3s ease;
 }
 
 h1 {
     font-size: 3rem;
     margin: 0;
     font-weight: 400;
+    color: var(--card-header-color);
 }
 
 .card {
     width: 100%;
     border-radius: 20px !important;
     overflow: hidden;
+    background-color: var(--card-bg);
+    box-shadow: var(--box-shadow);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    border: none;
 }
 
 .card-header {
-    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-    color: white;
+    background: var(--card-header-bg);
+    color: var(--card-header-color);
     border-radius: 20px 20px 0 0 !important;
     padding: 12px 18px;
+    transition: color 0.3s ease;
 }
 
 .card-body {
     padding: 0 15px !important;
+    background-color: var(--card-bg);
+    transition: background-color 0.3s ease;
 }
 
+/* 优化分隔线样式 */
 .info-row {
     display: flex;
     justify-content: space-between;
-    padding: 6px 15px !important;
-    border-bottom: 1px solid #e0e0e0;
+    padding: 10px 15px !important;
+    border-bottom: none;
+    position: relative;
     font-size: 1.05rem;
     margin: 0 !important;
     align-items: center;
+    transition: background-color 0.3s ease;
 }
 
-.info-row:first-child {
-    padding-top: 6px !important;
-    margin-top: 0 !important;
+.info-row::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: linear-gradient(to right,
+            transparent,
+            var(--border-color) 20%,
+            var(--border-color) 80%,
+            transparent);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-.info-row:last-child {
-    padding-bottom: 6px !important;
-    margin-bottom: 0 !important;
-    border-bottom: none;
+.info-row:last-child::after {
+    display: none;
 }
 
 .info-row:hover {
-    background-color: #f8f9fa;
+    background-color: var(--hover-bg);
 }
 
 .ip-value {
@@ -119,12 +194,34 @@ h1 {
 .loading {
     text-align: center;
     padding: 0 20px;
-    color: #6c757d;
+    color: var(--value-color);
 }
 
 .spinner-border {
     width: 2rem;
     height: 2rem;
+}
+
+/* 主题切换按钮样式 */
+.theme-toggle {
+    cursor: pointer;
+    font-size: 1.8rem;
+    margin-left: 10px;
+    opacity: 0.8;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    user-select: none;
+}
+
+.theme-toggle:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.search-icon {
+    cursor: pointer;
+    font-size: 1.8rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin-left: 10px;
 }
 
 @media (max-width: 768px) {

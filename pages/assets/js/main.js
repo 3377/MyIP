@@ -22,6 +22,56 @@ function createInfoItem(label, value) {
   );
 }
 
+// 主题管理
+function checkAndSetTheme() {
+  // 检查本地存储中是否有用户设置的主题
+  const savedTheme = localStorage.getItem('theme');
+  
+  if (savedTheme) {
+    // 如果用户手动设置过主题，则使用保存的主题
+    setTheme(savedTheme);
+  } else {
+    // 否则根据当前北京时间自动设置主题
+    const beijingHour = getBeiJingHour();
+    const isDarkHours = beijingHour >= 18 || beijingHour < 8;
+    setTheme(isDarkHours ? 'dark' : 'light');
+  }
+}
+
+// 获取北京时间的小时数
+function getBeiJingHour() {
+  const now = new Date();
+  const utcTime = now.getTime() + now.getTimezoneOffset() * 60000;
+  const beijingTime = new Date(utcTime + 8 * 3600000);
+  return beijingTime.getHours();
+}
+
+// 设置主题
+function setTheme(theme) {
+  document.body.setAttribute('data-theme', theme);
+  
+  // 更新主题切换按钮的图标
+  const themeToggle = document.getElementById('theme-toggle');
+  if (themeToggle) {
+    themeToggle.textContent = theme === 'dark' ? '🌙' : '🌞';
+  }
+}
+
+// 切换主题
+function toggleTheme() {
+  const currentTheme = document.body.getAttribute('data-theme');
+  const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  
+  // 保存到本地存储
+  localStorage.setItem('theme', newTheme);
+  
+  // 应用新主题
+  setTheme(newTheme);
+}
+
+// 暴露给全局使用
+window.toggleTheme = toggleTheme;
+
 // 加载访问统计
 function loadBusuanziScript() {
   $.getScript(
@@ -321,6 +371,19 @@ function executeIPQuery(ip) {
 
 // 初始化
 $(document).ready(function () {
+  // 设置主题
+  checkAndSetTheme();
+  
+  // 每小时检查一次主题（处理自动切换）
+  setInterval(function() {
+    // 如果用户没有手动设置主题，则自动更新
+    if (!localStorage.getItem('theme')) {
+      const beijingHour = getBeiJingHour();
+      const isDarkHours = beijingHour >= 18 || beijingHour < 8;
+      setTheme(isDarkHours ? 'dark' : 'light');
+    }
+  }, 60 * 60 * 1000); // 每小时检查一次
+  
   $("#ipInput").on("keypress", function (e) {
     if (e.which === 13) {
       const ip = $(this).val().trim();
