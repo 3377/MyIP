@@ -1,8 +1,8 @@
 /* 主题变量 */
 :root {
     /* 亮色主题变量 */
-    --light-bg-color: #f0f5f9;
-    --light-bg-pattern: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"%3E%3Cpath fill="%236d7f91" fill-opacity="0.15" d="M1 3h1v1H1V3zm3 0h1v1H4V3zm3 0h1v1H7V3zm3 0h1v1h-1V3zm3 0h1v1h-1V3zm3 0h1v1h-1V3zM1 6h1v1H1V6zm3 0h1v1H4V6zm3 0h1v1H7V6zm3 0h1v1h-1V6zm3 0h1v1h-1V6zm3 0h1v1h-1V6zM1 9h1v1H1V9zm3 0h1v1H4V9zm3 0h1v1H7V9zm3 0h1v1h-1V9zm3 0h1v1h-1V9zm3 0h1v1h-1V9zM1 12h1v1H1v-1zm3 0h1v1H4v-1zm3 0h1v1H7v-1zm3 0h1v1h-1v-1zm3 0h1v1h-1v-1zm3 0h1v1h-1v-1zM1 15h1v1H1v-1zm3 0h1v1H4v-1zm3 0h1v1H7v-1zm3 0h1v1h-1v-1zm3 0h1v1h-1v-1zm3 0h1v1h-1v-1z"%3E%3C/path%3E%3C/svg%3E');
+    --light-bg-color: #e8edf2;
+    --light-bg-pattern: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"%3E%3Cpath fill="%23334455" fill-opacity="0.28" d="M1 3h2v2H1V3zm4 0h2v2H5V3zm4 0h2v2H9V3zm4 0h2v2h-2V3zm4 0h2v2h-2V3zm4 0h2v2h-2V3zM1 7h2v2H1V7zm4 0h2v2H5V7zm4 0h2v2H9V7zm4 0h2v2h-2V7zm4 0h2v2h-2V7zm4 0h2v2h-2V7zM1 11h2v2H1v-2zm4 0h2v2H5v-2zm4 0h2v2H9v-2zm4 0h2v2h-2v-2zm4 0h2v2h-2v-2zm4 0h2v2h-2v-2zM1 15h2v2H1v-2zm4 0h2v2H5v-2zm4 0h2v2H9v-2zm4 0h2v2h-2v-2zm4 0h2v2h-2v-2zm4 0h2v2h-2v-2zM1 19h2v2H1v-2zm4 0h2v2H5v-2zm4 0h2v2H9v-2zm4 0h2v2h-2v-2zm4 0h2v2h-2v-2zm4 0h2v2h-2v-2z"%3E%3C/path%3E%3C/svg%3E');
     --light-card-bg: #ffffff;
     --light-card-header-bg: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
     --light-card-header-color: white;
@@ -10,7 +10,7 @@
     --light-value-color: #6c757d;
     --light-hover-bg: #f8f9fa;
     --light-border-color: rgba(0, 0, 0, 0.2);
-    --light-box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --light-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
 
     /* 暗色主题变量 - 灰色风格 */
     --dark-bg-color: #1f2937;
@@ -116,6 +116,8 @@ h1 {
     box-shadow: var(--box-shadow);
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
     border: none;
+    position: relative;
+    z-index: 1;
 }
 
 .card-header {
