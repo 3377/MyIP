@@ -1,33 +1,28 @@
 /* 主题变量 */
 :root {
     /* 亮色主题变量 - 3D灰色蜂巢 */
-    --light-bg-color-1: #59708a;
-    /* 更加深主色，增强对比度 */
-    --light-bg-color-2: #92a7be;
-    /* 调整次色，增强对比度 */
-    --light-bg-color-3: #455b75;
-    /* 深边缘色，提高可见度 */
+    --light-bg-color-1: #adbdcf;
+    --light-bg-color-2: #c8d5e6;
+    --light-bg-color-3: #8598ac;
     --light-bg-base: #e6edf5;
 
-    /* 3D灰色蜂巢背景 - 增强对比度 */
+    /* 3D灰色蜂巢背景 */
     --light-bg-pattern:
-        /* 蜂巢结构 - 强化边界和内部色差 */
+        /* 蜂巢结构 */
         radial-gradient(circle farthest-side at 0% 50%, var(--light-bg-color-2) 23.5%, rgba(0, 0, 0, 0) 0)21px 30px,
         radial-gradient(circle farthest-side at 0% 50%, var(--light-bg-color-3) 24%, rgba(0, 0, 0, 0) 0)19px 30px,
         linear-gradient(var(--light-bg-color-2) 14%, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 85%, var(--light-bg-color-2) 0)0 0,
         linear-gradient(150deg, var(--light-bg-color-2) 24%, var(--light-bg-color-1) 0, var(--light-bg-color-1) 26%, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 74%, var(--light-bg-color-1) 0, var(--light-bg-color-1) 76%, var(--light-bg-color-2) 0)0 0,
         linear-gradient(30deg, var(--light-bg-color-2) 24%, var(--light-bg-color-1) 0, var(--light-bg-color-1) 26%, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 74%, var(--light-bg-color-1) 0, var(--light-bg-color-1) 76%, var(--light-bg-color-2) 0)0 0,
-        linear-gradient(90deg, var(--light-bg-color-3) 2%, var(--light-bg-color-2) 0, var(--light-bg-color-2) 98%, var(--light-bg-color-3) 0%)0 0 var(--light-bg-base);
-    --light-bg-size: 36px 54px;
-    /* 缩小蜂巢尺寸，增加密度 */
-    /* 稍微缩小蜂巢尺寸，增加密度 */
+        linear-gradient(90deg, var(--light-bg-color-3) 2%, var(--light-bg-color-2) 0, var(--light-bg-color-2) 98%, var(--light-bg-color-3) 0%)0 0 var(--light-bg-color-base);
+    --light-bg-size: 40px 60px;
 
-    /* 3D增强效果叠加层 - 增强立体感和阴影 */
+    /* 3D增强效果叠加层 */
     --light-bg-3d-effect:
-        linear-gradient(45deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 70%),
-        repeating-linear-gradient(63deg, rgba(255, 255, 255, 0.18) 0px, rgba(255, 255, 255, 0.18) 1px, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0) 4px),
-        repeating-linear-gradient(117deg, rgba(0, 0, 0, 0.12) 0px, rgba(0, 0, 0, 0.12) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 4px),
-        linear-gradient(135deg, rgba(180, 210, 240, 0.97) 0%, rgba(100, 128, 160, 0.8) 100%);
+        linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 70%),
+        repeating-linear-gradient(63deg, rgba(255, 255, 255, 0.1) 0px, rgba(255, 255, 255, 0.1) 1px, rgba(255, 255, 255, 0) 1px, rgba(255, 255, 255, 0) 4px),
+        repeating-linear-gradient(117deg, rgba(0, 0, 0, 0.04) 0px, rgba(0, 0, 0, 0.04) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 4px),
+        linear-gradient(135deg, rgba(194, 218, 245, 0.9) 0%, rgba(140, 164, 191, 0.6) 100%);
     --light-bg-3d-size: 200% 200%;
 
     --light-card-bg: rgba(255, 255, 255, 0.8);
@@ -133,24 +128,6 @@ body {
     font-family: "DingTalk JinBuTi", "Noto Sans SC", system-ui, -apple-system, sans-serif;
     font-weight: 400;
     transition: background 0.3s ease;
-    position: relative;
-}
-
-/* 亮色模式下的额外蜂巢边框增强 */
-body:not([data-theme="dark"])::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background:
-        repeating-linear-gradient(60deg, rgba(0, 0, 0, 0.04) 0px, rgba(0, 0, 0, 0.04) 1px, transparent 1px, transparent 4px),
-        repeating-linear-gradient(120deg, rgba(0, 0, 0, 0.04) 0px, rgba(0, 0, 0, 0.04) 1px, transparent 1px, transparent 4px),
-        repeating-radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.03) 0%, rgba(0, 0, 0, 0.03) 1%, transparent 1%, transparent 2%);
-    background-size: 40px 40px, 40px 40px, 100px 100px;
-    pointer-events: none;
-    z-index: 0;
 }
 
 .container {
@@ -159,8 +136,6 @@ body:not([data-theme="dark"])::before {
     min-height: 100vh;
     display: flex;
     align-items: center;
-    position: relative;
-    z-index: 1;
 }
 
 .info-label {
