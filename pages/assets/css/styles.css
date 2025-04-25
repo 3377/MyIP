@@ -1,32 +1,50 @@
 /* 主题变量 */
 :root {
     /* 亮色主题变量 */
-    --light-bg-color: #e8edf2;
-    --light-bg-pattern: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"%3E%3Cpath fill="%23334455" fill-opacity="0.28" d="M1 3h2v2H1V3zm4 0h2v2H5V3zm4 0h2v2H9V3zm4 0h2v2h-2V3zm4 0h2v2h-2V3zm4 0h2v2h-2V3zM1 7h2v2H1V7zm4 0h2v2H5V7zm4 0h2v2H9V7zm4 0h2v2h-2V7zm4 0h2v2h-2V7zm4 0h2v2h-2V7zM1 11h2v2H1v-2zm4 0h2v2H5v-2zm4 0h2v2H9v-2zm4 0h2v2h-2v-2zm4 0h2v2h-2v-2zm4 0h2v2h-2v-2zM1 15h2v2H1v-2zm4 0h2v2H5v-2zm4 0h2v2H9v-2zm4 0h2v2h-2v-2zm4 0h2v2h-2v-2zm4 0h2v2h-2v-2zM1 19h2v2H1v-2zm4 0h2v2H5v-2zm4 0h2v2H9v-2zm4 0h2v2h-2v-2zm4 0h2v2h-2v-2zm4 0h2v2h-2v-2z"%3E%3C/path%3E%3C/svg%3E');
-    --light-card-bg: #ffffff;
+    --light-bg-color-1: #d8e3f0;
+    --light-bg-color-2: #e8edf2;
+    --light-bg-pattern: radial-gradient(circle farthest-side at 0% 50%, var(--light-bg-color-2) 23.5%, rgba(240, 166, 17, 0) 0)21px 30px,
+        radial-gradient(circle farthest-side at 0% 50%, var(--light-bg-color-1) 24%, rgba(240, 166, 17, 0) 0)19px 30px,
+        linear-gradient(var(--light-bg-color-2) 14%, rgba(240, 166, 17, 0) 0, rgba(240, 166, 17, 0) 85%, var(--light-bg-color-2) 0)0 0,
+        linear-gradient(150deg, var(--light-bg-color-2) 24%, var(--light-bg-color-1) 0, var(--light-bg-color-1) 26%, rgba(240, 166, 17, 0) 0, rgba(240, 166, 17, 0) 74%, var(--light-bg-color-1) 0, var(--light-bg-color-1) 76%, var(--light-bg-color-2) 0)0 0,
+        linear-gradient(30deg, var(--light-bg-color-2) 24%, var(--light-bg-color-1) 0, var(--light-bg-color-1) 26%, rgba(240, 166, 17, 0) 0, rgba(240, 166, 17, 0) 74%, var(--light-bg-color-1) 0, var(--light-bg-color-1) 76%, var(--light-bg-color-2) 0)0 0,
+        linear-gradient(90deg, var(--light-bg-color-1) 2%, var(--light-bg-color-2) 0, var(--light-bg-color-2) 98%, var(--light-bg-color-1) 0%)0 0 var(--light-bg-color-2);
+    --light-bg-size: 40px 60px;
+
+    --light-card-bg: rgba(255, 255, 255, 0.85);
     --light-card-header-bg: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
     --light-card-header-color: white;
     --light-label-color: #495057;
     --light-value-color: #6c757d;
-    --light-hover-bg: #f8f9fa;
+    --light-hover-bg: rgba(248, 249, 250, 0.7);
     --light-border-color: rgba(0, 0, 0, 0.2);
-    --light-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
+    --light-box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 
-    /* 暗色主题变量 - 灰色风格 */
-    --dark-bg-color: #1f2937;
-    --dark-bg-pattern: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"%3E%3Cpath fill="%23ffffff" fill-opacity="0.15" d="M1 3h1v1H1V3zm3 0h1v1H4V3zm3 0h1v1H7V3zm3 0h1v1h-1V3zm3 0h1v1h-1V3zm3 0h1v1h-1V3zM1 6h1v1H1V6zm3 0h1v1H4V6zm3 0h1v1H7V6zm3 0h1v1h-1V6zm3 0h1v1h-1V6zm3 0h1v1h-1V6zM1 9h1v1H1V9zm3 0h1v1H4V9zm3 0h1v1H7V9zm3 0h1v1h-1V9zm3 0h1v1h-1V9zm3 0h1v1h-1V9zM1 12h1v1H1v-1zm3 0h1v1H4v-1zm3 0h1v1H7v-1zm3 0h1v1h-1v-1zm3 0h1v1h-1v-1zm3 0h1v1h-1v-1zM1 15h1v1H1v-1zm3 0h1v1H4v-1zm3 0h1v1H7v-1zm3 0h1v1h-1v-1zm3 0h1v1h-1v-1zm3 0h1v1h-1v-1z"%3E%3C/path%3E%3C/svg%3E');
-    --dark-card-bg: #374151;
+    /* 暗色主题变量 - 蜂巢深蓝风格 */
+    --dark-bg-color-1: #041b41;
+    --dark-bg-color-2: #0b224a;
+    --dark-bg-pattern: radial-gradient(circle farthest-side at 0% 50%, var(--dark-bg-color-2) 23.5%, rgba(240, 166, 17, 0) 0)21px 30px,
+        radial-gradient(circle farthest-side at 0% 50%, var(--dark-bg-color-1) 24%, rgba(240, 166, 17, 0) 0)19px 30px,
+        linear-gradient(var(--dark-bg-color-2) 14%, rgba(240, 166, 17, 0) 0, rgba(240, 166, 17, 0) 85%, var(--dark-bg-color-2) 0)0 0,
+        linear-gradient(150deg, var(--dark-bg-color-2) 24%, var(--dark-bg-color-1) 0, var(--dark-bg-color-1) 26%, rgba(240, 166, 17, 0) 0, rgba(240, 166, 17, 0) 74%, var(--dark-bg-color-1) 0, var(--dark-bg-color-1) 76%, var(--dark-bg-color-2) 0)0 0,
+        linear-gradient(30deg, var(--dark-bg-color-2) 24%, var(--dark-bg-color-1) 0, var(--dark-bg-color-1) 26%, rgba(240, 166, 17, 0) 0, rgba(240, 166, 17, 0) 74%, var(--dark-bg-color-1) 0, var(--dark-bg-color-1) 76%, var(--dark-bg-color-2) 0)0 0,
+        linear-gradient(90deg, var(--dark-bg-color-1) 2%, var(--dark-bg-color-2) 0, var(--dark-bg-color-2) 98%, var(--dark-bg-color-1) 0%)0 0 var(--dark-bg-color-2);
+    --dark-bg-size: 40px 60px;
+
+    --dark-card-bg: rgba(55, 65, 81, 0.85);
     --dark-card-header-bg: linear-gradient(135deg, #4b0082 0%, #1e62c9 100%);
     --dark-card-header-color: #f3f4f6;
     --dark-label-color: #d1d5db;
     --dark-value-color: #9ca3af;
-    --dark-hover-bg: #4b5563;
+    --dark-hover-bg: rgba(75, 85, 99, 0.7);
     --dark-border-color: rgba(255, 255, 255, 0.18);
-    --dark-box-shadow: 0 4px 6px rgba(0, 0, 0, 0.25);
+    --dark-box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 
     /* 默认使用亮色主题 */
-    --bg-color: var(--light-bg-color);
+    --bg-color-1: var(--light-bg-color-1);
+    --bg-color-2: var(--light-bg-color-2);
     --bg-pattern: var(--light-bg-pattern);
+    --bg-size: var(--light-bg-size);
     --card-bg: var(--light-card-bg);
     --card-header-bg: var(--light-card-header-bg);
     --card-header-color: var(--light-card-header-color);
@@ -37,15 +55,17 @@
     --box-shadow: var(--light-box-shadow);
 
     --bs-body-font-family: "DingTalk JinBuTi", "Noto Sans SC", system-ui, -apple-system, sans-serif;
-    --bs-body-bg: var(--bg-color);
+    --bs-body-bg: var(--bg-color-2);
     --bs-body-color: var(--label-color);
     --bs-body-font-weight: 400;
 }
 
 /* 暗色主题样式 */
 [data-theme="dark"] {
-    --bg-color: var(--dark-bg-color);
+    --bg-color-1: var(--dark-bg-color-1);
+    --bg-color-2: var(--dark-bg-color-2);
     --bg-pattern: var(--dark-bg-pattern);
+    --bg-size: var(--dark-bg-size);
     --card-bg: var(--dark-card-bg);
     --card-header-bg: var(--dark-card-header-bg);
     --card-header-color: var(--dark-card-header-color);
@@ -55,7 +75,7 @@
     --border-color: var(--dark-border-color);
     --box-shadow: var(--dark-box-shadow);
 
-    --bs-body-bg: var(--bg-color);
+    --bs-body-bg: var(--bg-color-2);
     --bs-body-color: var(--label-color);
 }
 
@@ -65,15 +85,15 @@
 }
 
 body {
-    background-color: var(--bg-color);
-    background-image: var(--bg-pattern);
+    background: var(--bg-pattern);
+    background-size: var(--bg-size);
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
     font-family: "DingTalk JinBuTi", "Noto Sans SC", system-ui, -apple-system, sans-serif;
     font-weight: 400;
-    transition: background-color 0.3s ease;
+    transition: background 0.3s ease;
 }
 
 .container {
@@ -118,13 +138,14 @@ h1 {
     border: none;
     position: relative;
     z-index: 1;
+    backdrop-filter: blur(5px);
 }
 
 .card-header {
     background: var(--card-header-bg);
     color: var(--card-header-color);
     border-radius: 20px 20px 0 0 !important;
-    padding: 12px 18px;
+    padding: 15px 20px;
     transition: color 0.3s ease;
 }
 
