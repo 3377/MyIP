@@ -231,6 +231,13 @@ function updateTime() {
   const usOffset = isDST() ? -4 : -5;
   const usTime = new Date(utcTime + usOffset * 3600000);
   $("#usTime").text(formatDate(usTime));
+  
+  // 没有用户主题偏好的情况下，每分钟检查一次是否需要自动切换主题
+  const beijingMinute = beijingTime.getMinutes();
+  
+  if (beijingMinute === 0 && !localStorage.getItem('preferredTheme')) {
+    autoSwitchThemeByTime();
+  }
 }
 
 function isDST() {
@@ -257,6 +264,57 @@ function formatDate(date) {
     return `${month}-${day} ${hours}:${minutes}:${seconds}`;
   }
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
+
+// 主题相关函数
+function initializeTheme() {
+  // 检查是否有保存的主题偏好
+  const savedTheme = localStorage.getItem('preferredTheme');
+  const userSelectedTheme = savedTheme === 'light' || savedTheme === 'dark' ? savedTheme : null;
+  
+  if (userSelectedTheme) {
+    // 如果用户选择过主题，优先使用用户选择的主题
+    applyTheme(userSelectedTheme);
+  } else {
+    // 否则，根据北京时间自动切换主题
+    autoSwitchThemeByTime();
+  }
+}
+
+function autoSwitchThemeByTime() {
+  // 获取当前北京时间
+  const now = new Date();
+  const utcTime = now.getTime() + now.getTimezoneOffset() * 60000;
+  const beijingTime = new Date(utcTime + 8 * 3600000);
+  const hour = beijingTime.getHours();
+  
+  // 晚上18点到早上8点使用暗色主题，其他时间使用亮色主题
+  const theme = (hour >= 18 || hour < 8) ? 'dark' : 'light';
+  applyTheme(theme);
+  
+  // 更新主题切换按钮的图标
+  updateThemeToggleIcon(theme);
+}
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  updateThemeToggleIcon(theme);
+}
+
+function toggleTheme() {
+  const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+  const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+  
+  // 应用新主题
+  applyTheme(newTheme);
+  
+  // 保存用户主题偏好
+  localStorage.setItem('preferredTheme', newTheme);
+}
+
+function updateThemeToggleIcon(theme) {
+  const icon = theme === 'dark' ? '🌙' : '🌞';
+  $("#themeToggle").html(icon);
 }
 
 // 复制功能
@@ -328,6 +386,14 @@ $(document).ready(function () {
         executeIPQuery(ip);
       }
     }
+  });
+
+  // 初始化主题
+  initializeTheme();
+  
+  // 主题切换按钮事件监听
+  $("#themeToggle").on("click", function() {
+    toggleTheme();
   });
 
   fetchPublicIP();

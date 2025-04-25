@@ -1,9 +1,37 @@
 /* 覆盖 Bootstrap 默认变量 */
 :root {
+    /* Light theme colors */
     --bs-body-font-family: "DingTalk JinBuTi", "Noto Sans SC", system-ui, -apple-system, sans-serif;
     --bs-body-bg: #f0f5f9;
     --bs-body-color: #212529;
     --bs-body-font-weight: 400;
+    
+    /* Theme variables */
+    --theme-background: #f0f5f9;
+    --theme-background-pattern: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4"%3E%3Cpath fill="%239C92AC" fill-opacity="0.1" d="M1 3h1v1H1V3zm2-2h1v1H3V1z"%3E%3C/path%3E%3C/svg%3E');
+    --theme-card-bg: #ffffff;
+    --theme-header-bg: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+    --theme-header-text: white;
+    --theme-row-border: 2px solid #e0e0e0;
+    --theme-row-hover: #f8f9fa;
+    --theme-label-color: #495057;
+    --theme-value-color: #6c757d;
+    --theme-toggle-bg: rgba(255, 255, 255, 0.2);
+    --theme-toggle-color: white;
+}
+
+[data-theme="dark"] {
+    --theme-background: #121212;
+    --theme-background-pattern: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4"%3E%3Cpath fill="%23FFFFFF" fill-opacity="0.05" d="M1 3h1v1H1V3zm2-2h1v1H3V1z"%3E%3C/path%3E%3C/svg%3E');
+    --theme-card-bg: #1e1e1e;
+    --theme-header-bg: linear-gradient(135deg, #8844ee 0%, #4c6fff 100%);
+    --theme-header-text: white;
+    --theme-row-border: 2px solid #333333;
+    --theme-row-hover: #2a2a2a;
+    --theme-label-color: #b0b0b0;
+    --theme-value-color: #d0d0d0;
+    --theme-toggle-bg: rgba(0, 0, 0, 0.3);
+    --theme-toggle-color: white;
 }
 
 /* 重置基础样式 */
@@ -12,14 +40,15 @@
 }
 
 body {
-    background-color: #f0f5f9;
-    background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4"%3E%3Cpath fill="%239C92AC" fill-opacity="0.1" d="M1 3h1v1H1V3zm2-2h1v1H3V1z"%3E%3C/path%3E%3C/svg%3E');
+    background-color: var(--theme-background);
+    background-image: var(--theme-background-pattern);
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
     font-family: "DingTalk JinBuTi", "Noto Sans SC", system-ui, -apple-system, sans-serif;
     font-weight: 400;
+    transition: background-color 0.3s ease;
 }
 
 .container {
@@ -32,17 +61,19 @@ body {
 
 .info-label {
     font-weight: 400;
-    color: #495057;
+    color: var(--theme-label-color);
     margin-right: 10px;
     flex-shrink: 0;
     text-align: left;
+    transition: color 0.3s ease;
 }
 
 .info-value {
-    color: #6c757d;
+    color: var(--theme-value-color);
     font-weight: 400;
     text-align: right;
     flex-shrink: 0;
+    transition: color 0.3s ease;
 }
 
 h1 {
@@ -55,13 +86,23 @@ h1 {
     width: 100%;
     border-radius: 20px !important;
     overflow: hidden;
+    background-color: var(--theme-card-bg);
+    transition: background-color 0.3s ease;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .card-header {
-    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-    color: white;
+    background: var(--theme-header-bg);
+    color: var(--theme-header-text);
     border-radius: 20px 20px 0 0 !important;
     padding: 12px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-content {
+    flex-grow: 1;
 }
 
 .card-body {
@@ -71,26 +112,27 @@ h1 {
 .info-row {
     display: flex;
     justify-content: space-between;
-    padding: 6px 15px !important;
-    border-bottom: 1px solid #e0e0e0;
+    padding: 10px 15px !important;
+    border-bottom: var(--theme-row-border);
     font-size: 1.05rem;
     margin: 0 !important;
     align-items: center;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .info-row:first-child {
-    padding-top: 6px !important;
+    padding-top: 10px !important;
     margin-top: 0 !important;
 }
 
 .info-row:last-child {
-    padding-bottom: 6px !important;
+    padding-bottom: 10px !important;
     margin-bottom: 0 !important;
     border-bottom: none;
 }
 
 .info-row:hover {
-    background-color: #f8f9fa;
+    background-color: var(--theme-row-hover);
 }
 
 .ip-value {
@@ -119,12 +161,35 @@ h1 {
 .loading {
     text-align: center;
     padding: 0 20px;
-    color: #6c757d;
+    color: var(--theme-value-color);
+    transition: color 0.3s ease;
 }
 
 .spinner-border {
     width: 2rem;
     height: 2rem;
+}
+
+/* Theme Toggle Button */
+.theme-toggle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--theme-toggle-bg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    color: var(--theme-toggle-color);
+    font-size: 1.5rem;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    margin-left: 10px;
+}
+
+.theme-toggle:hover {
+    transform: rotate(30deg);
 }
 
 @media (max-width: 768px) {
@@ -155,5 +220,11 @@ h1 {
 
     h1 {
         font-size: 2.5rem;
+    }
+    
+    .theme-toggle {
+        width: 32px;
+        height: 32px;
+        font-size: 1.2rem;
     }
 }
