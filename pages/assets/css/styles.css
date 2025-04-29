@@ -304,31 +304,36 @@ h1 {
     .info-row {
         font-size: 0.85rem;
         padding: 8px 15px !important;
+        display: flex;
+        align-items: center;
     }
 
     .info-value {
         min-width: unset;
-        max-width: 75%;
+        max-width: 80%;
         text-align: right;
         word-break: break-all;
+        flex: 1;
     }
 
     .info-label {
         flex: 0 0 auto;
         width: auto;
-        min-width: 70px;
-        margin-right: 8px;
+        min-width: 45px;
+        margin-right: 5px;
         white-space: nowrap;
+        font-size: 0.85rem;
     }
 
     /* 特别处理位置信息的样式 */
-    [class*="位置"]+.info-value {
-        max-width: calc(100% - 70px);
+    .info-row .info-value {
+        max-width: calc(100% - 50px);
         text-align: right;
         word-break: keep-all;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        padding-left: 5px;
     }
 
     h1 {
