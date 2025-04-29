@@ -215,12 +215,16 @@ h1 {
 .info-row::after {
     content: '';
     position: absolute;
-    left: 15px;
-    right: 15px;
+    left: 0;
+    right: 0;
     bottom: 0;
-    height: 1px;
-    background: var(--border-color);
-    opacity: 0.5;
+    height: 2px;
+    background: linear-gradient(to right,
+            transparent 0%,
+            var(--border-color) 10%,
+            var(--border-color) 90%,
+            transparent 100%);
+    opacity: 0.7;
 }
 
 .info-row:last-child::after {
