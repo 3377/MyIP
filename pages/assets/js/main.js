@@ -444,4 +444,13 @@ function updateLocationError() {
       $(this).find(".info-value").text(errorMsg);
     }
   });
-} 
+}
+
+// 初始化主题检查
+document.addEventListener('DOMContentLoaded', function() {
+  // 初始检查主题
+  checkAndSetTheme();
+  
+  // 每分钟检查一次主题（考虑到性能，不需要每秒检查）
+  setInterval(checkAndSetTheme, 60000);
+}); 
