@@ -307,14 +307,28 @@ h1 {
     }
 
     .info-value {
-        min-width: 140px;
-        max-width: 50%;
+        min-width: unset;
+        max-width: 75%;
+        text-align: right;
+        word-break: break-all;
     }
 
     .info-label {
-        flex: 1;
-        margin-right: 5px;
-        text-align: left;
+        flex: 0 0 auto;
+        width: auto;
+        min-width: 60px;
+        margin-right: 8px;
+        white-space: nowrap;
+    }
+
+    /* 特别处理位置信息的样式 */
+    [class*="位置"]+.info-value {
+        max-width: calc(100% - 70px);
+        text-align: right;
+        word-break: keep-all;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     h1 {
