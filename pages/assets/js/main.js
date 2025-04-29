@@ -313,14 +313,42 @@ function formatDate(date) {
 window.copyIP = function (text) {
   navigator.clipboard.writeText(text)
     .then(function () {
-      const tooltip = $(".ip-value .copy-tooltip");
-      tooltip.fadeIn(200);
-      setTimeout(() => {
-        tooltip.fadeOut(200);
-      }, 1500);
+      // 获取当前点击的元素
+      const clickedElement = document.activeElement || event.target;
+      const tooltip = clickedElement.querySelector('.copy-tooltip');
+      
+      // 隐藏所有其他的提示框
+      document.querySelectorAll('.copy-tooltip').forEach(tip => {
+        if (tip !== tooltip) {
+          tip.style.display = 'none';
+        }
+      });
+
+      // 显示当前提示框
+      if (tooltip) {
+        tooltip.style.display = 'block';
+        
+        // 3秒后自动隐藏
+        setTimeout(() => {
+          tooltip.style.display = 'none';
+        }, 1500);
+      }
     })
     .catch(function (err) {
       console.error("复制失败:", err);
+      // 显示错误提示
+      const clickedElement = document.activeElement || event.target;
+      const tooltip = clickedElement.querySelector('.copy-tooltip');
+      if (tooltip) {
+        tooltip.textContent = '复制失败';
+        tooltip.style.display = 'block';
+        tooltip.style.background = 'rgba(220, 53, 69, 0.9)';
+        setTimeout(() => {
+          tooltip.style.display = 'none';
+          tooltip.textContent = '已复制!';
+          tooltip.style.background = 'rgba(0, 0, 0, 0.8)';
+        }, 1500);
+      }
     });
 };
 
