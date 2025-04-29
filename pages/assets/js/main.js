@@ -16,7 +16,7 @@ function createInfoItem(label, value) {
   return (
     '<div class="info-row"><span class="info-label">' +
     label +
-    `:</span><span class="${className}" onclick="window.copyIP('${value}')">` +
+    `:</span><span class="${className}" onclick="copyIP('${value}', this)">` +
     value +
     '<span class="copy-tooltip">已复制!</span></span></div>'
   );
@@ -310,25 +310,20 @@ function formatDate(date) {
 }
 
 // 复制功能
-window.copyIP = function (text) {
+window.copyIP = function (text, element) {
   navigator.clipboard.writeText(text)
     .then(function () {
-      // 获取当前点击的元素
-      const clickedElement = document.activeElement || event.target;
-      const tooltip = clickedElement.querySelector('.copy-tooltip');
-      
       // 隐藏所有其他的提示框
       document.querySelectorAll('.copy-tooltip').forEach(tip => {
-        if (tip !== tooltip) {
-          tip.style.display = 'none';
-        }
+        tip.style.display = 'none';
       });
 
-      // 显示当前提示框
+      // 显示当前元素的提示框
+      const tooltip = element.querySelector('.copy-tooltip');
       if (tooltip) {
         tooltip.style.display = 'block';
         
-        // 3秒后自动隐藏
+        // 1.5秒后自动隐藏
         setTimeout(() => {
           tooltip.style.display = 'none';
         }, 1500);
@@ -337,8 +332,7 @@ window.copyIP = function (text) {
     .catch(function (err) {
       console.error("复制失败:", err);
       // 显示错误提示
-      const clickedElement = document.activeElement || event.target;
-      const tooltip = clickedElement.querySelector('.copy-tooltip');
+      const tooltip = element.querySelector('.copy-tooltip');
       if (tooltip) {
         tooltip.textContent = '复制失败';
         tooltip.style.display = 'block';
