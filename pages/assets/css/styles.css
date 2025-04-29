@@ -106,8 +106,6 @@
 }
 
 body {
-    background: var(--bg-pattern);
-    background-size: var(--bg-size);
     position: relative;
     display: flex;
     justify-content: center;
@@ -116,6 +114,9 @@ body {
     font-family: "DingTalk JinBuTi", "Noto Sans SC", system-ui, -apple-system, sans-serif;
     font-weight: 400;
     transition: background 0.3s ease;
+    margin: 0;
+    padding: 0;
+    background: #f5f5f5;
 }
 
 /* 添加蜂巢内部纹理点缀 */
@@ -178,6 +179,20 @@ h1 {
     z-index: 1;
     backdrop-filter: blur(5px);
     transform: translateZ(0);
+}
+
+.card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--bg-pattern);
+    background-size: var(--bg-size);
+    opacity: 0.15;
+    z-index: -1;
+    pointer-events: none;
 }
 
 .card:hover {
@@ -292,13 +307,28 @@ h1 {
 }
 
 @media (max-width: 768px) {
+    body {
+        background: var(--bg-pattern);
+        background-size: var(--bg-size);
+    }
+
     .container {
-        padding: 15px;
+        padding: 0;
         align-items: flex-start;
+        min-height: 100vh;
+        max-width: 100%;
     }
 
     .card {
-        margin: 10px 0;
+        margin: 0;
+        min-height: 100vh;
+        border-radius: 0 !important;
+        box-shadow: none;
+    }
+
+    .card-header {
+        border-radius: 0 !important;
+        padding: 12px 15px;
     }
 
     .info-row {
@@ -306,18 +336,59 @@ h1 {
         padding: 8px 15px !important;
     }
 
-    .info-value {
-        min-width: 140px;
-        max-width: 50%;
+    /* 优化位置ABCD的显示 */
+    .info-row:has(.info-label:contains("位置")) {
+        font-size: 0.8rem;
+        padding: 6px 15px !important;
     }
 
-    .info-label {
-        flex: 1;
+    .info-row:has(.info-label:contains("位置")) .info-label {
+        min-width: 45px;
         margin-right: 5px;
+    }
+
+    .info-row:has(.info-label:contains("位置")) .info-value {
+        min-width: 0;
+        max-width: calc(100% - 50px);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
         text-align: left;
     }
 
+    .info-value {
+        min-width: 120px;
+        max-width: 60%;
+        word-break: break-all;
+    }
+
+    .info-label {
+        flex: 0 0 auto;
+        margin-right: 5px;
+        text-align: left;
+        min-width: 60px;
+    }
+
     h1 {
-        font-size: 2.5rem;
+        font-size: 2rem;
+    }
+
+    /* 调整搜索框样式 */
+    #searchBox {
+        margin: 8px 0;
+    }
+
+    #ipInput {
+        height: 36px;
+        font-size: 0.9rem;
+    }
+
+    /* 优化主题切换按钮 */
+    .theme-toggle {
+        font-size: 1.5rem;
+    }
+
+    .search-icon {
+        font-size: 1.5rem;
     }
 }
