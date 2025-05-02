@@ -167,22 +167,40 @@ function updateLocationInfo(locationInfo) {
   });
 }
 
-// 判断当前平台环境并返回正确的API基础URL
-function getApiBaseUrl() {
+// 判断当前平台环境并返回正确的API基础URL和是否直接使用备用API
+function getPlatformInfo() {
   // 检测当前URL是否在腾讯EdgeOne Pages上
-  if (window.location.hostname.includes('edgeone.site') || 
-      window.location.hostname.includes('edgeone.app') || 
-      window.location.hostname.includes('tencent-cloud.com')) {
-    // 当在腾讯EdgeOne Pages上时，使用绝对路径
-    return window.location.origin;
-  }
-  // 在Cloudflare Pages或其他环境下，使用相对路径
-  return '';
+  const isEdgeOne = window.location.hostname.includes('edgeone.site') || 
+                     window.location.hostname.includes('edgeone.app') || 
+                     window.location.hostname.includes('tencent-cloud.com');
+                     
+  return {
+    apiBaseUrl: isEdgeOne ? window.location.origin : '',
+    // 在EdgeOne环境下直接使用备用API
+    useBackupApi: isEdgeOne,
+    isEdgeOne: isEdgeOne
+  };
 }
 
 // 安全的API调用函数，带有错误处理和重试逻辑
 async function safeApiCall(endpoint, params = {}, options = {}) {
-  const apiBaseUrl = getApiBaseUrl();
+  const { apiBaseUrl, useBackupApi } = getPlatformInfo();
+  
+  // 如果在EdgeOne环境并设置了直接使用备用API，则直接使用备用API
+  if (useBackupApi && options.backupEndpoint) {
+    console.log('EdgeOne环境检测到，直接使用备用API:', options.backupEndpoint);
+    try {
+      const backupResponse = await fetch(options.backupEndpoint);
+      if (!backupResponse.ok) {
+        throw new Error(`备用API HTTP错误! status: ${backupResponse.status}`);
+      }
+      return await backupResponse.json();
+    } catch (backupError) {
+      console.error('备用API调用失败:', backupError);
+      throw backupError;
+    }
+  }
+  
   const url = `${apiBaseUrl}${endpoint}?${new URLSearchParams(params)}`;
   
   // 最大重试次数

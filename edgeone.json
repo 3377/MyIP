@@ -1,6 +1,14 @@
 {
   "rewrites": [
     {
+      "source": "/api/:path*",
+      "destination": "/api/:path*"
+    },
+    {
+      "source": "/_api/:path*",
+      "destination": "/api/:path*"
+    },
+    {
       "source": "/_api/all-location",
       "destination": "/functions/_api/all-location.js"
     },
@@ -11,10 +19,21 @@
     {
       "source": "/_api/ip-info",
       "destination": "/functions/_api/ip-info.js"
-    },
+    }
+  ],
+  "headers": [
     {
-      "source": "/_api/*",
-      "destination": "/functions/_api/$1.js"
+      "source": "/_api/(.*)",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        }
+      ]
     }
   ]
 } 
