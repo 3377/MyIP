@@ -1,0 +1,16 @@
+{
+  "rewrites": [
+    {
+      "source": "/_api/all-location",
+      "destination": "/_api/all-location"
+    },
+    {
+      "source": "/_api/public-ip",
+      "destination": "/_api/public-ip"
+    },
+    {
+      "source": "/_api/ip-info",
+      "destination": "/_api/ip-info"
+    }
+  ]
+} 

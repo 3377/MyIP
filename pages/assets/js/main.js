@@ -167,6 +167,19 @@ function updateLocationInfo(locationInfo) {
   });
 }
 
+// 判断当前平台环境并返回正确的API基础URL
+function getApiBaseUrl() {
+  // 检测当前URL是否在腾讯EdgeOne Pages上
+  if (window.location.hostname.includes('edgeone.site') || 
+      window.location.hostname.includes('edgeone.app') || 
+      window.location.hostname.includes('tencent-cloud.com')) {
+    // 当在腾讯EdgeOne Pages上时，使用绝对路径
+    return window.location.origin;
+  }
+  // 在Cloudflare Pages或其他环境下，使用相对路径
+  return '';
+}
+
 // 获取IP信息
 async function fetchIPInfo(ip) {
   if (!ip) {
@@ -200,8 +213,11 @@ async function fetchIPInfo(ip) {
       displayResult(ip, info);
       
       try {
+        // 获取API基础URL
+        const apiBaseUrl = getApiBaseUrl();
+        
         // 调用后端API获取所有位置信息（包括美团经纬度和位置信息）
-        const locationResponse = await fetch('/_api/all-location?' + new URLSearchParams({
+        const locationResponse = await fetch(`${apiBaseUrl}/_api/all-location?` + new URLSearchParams({
           ip: ip
         }));
         
@@ -249,7 +265,10 @@ async function fetchPublicIP() {
       fetchIPInfo(data.ip);
     } else {
       // 如果主API失败，使用后备方案
-      const backupResponse = await fetch('/_api/public-ip');
+      // 获取API基础URL
+      const apiBaseUrl = getApiBaseUrl();
+      
+      const backupResponse = await fetch(`${apiBaseUrl}/_api/public-ip`);
       const backupData = await backupResponse.json();
       
       if (backupData.success && backupData.ip) {
