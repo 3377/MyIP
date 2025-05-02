@@ -167,91 +167,6 @@ function updateLocationInfo(locationInfo) {
   });
 }
 
-// 判断当前平台环境并返回正确的API基础URL和是否直接使用备用API
-function getPlatformInfo() {
-  // 检测当前URL是否在腾讯EdgeOne Pages上
-  const isEdgeOne = window.location.hostname.includes('edgeone.site') || 
-                     window.location.hostname.includes('edgeone.app') || 
-                     window.location.hostname.includes('tencent-cloud.com');
-                     
-  return {
-    apiBaseUrl: isEdgeOne ? window.location.origin : '',
-    // 在EdgeOne环境下直接使用备用API
-    useBackupApi: isEdgeOne,
-    isEdgeOne: isEdgeOne
-  };
-}
-
-// 安全的API调用函数，带有错误处理和重试逻辑
-async function safeApiCall(endpoint, params = {}, options = {}) {
-  const { apiBaseUrl, useBackupApi } = getPlatformInfo();
-  
-  // 如果在EdgeOne环境并设置了直接使用备用API，则直接使用备用API
-  if (useBackupApi && options.backupEndpoint) {
-    console.log('EdgeOne环境检测到，直接使用备用API:', options.backupEndpoint);
-    try {
-      const backupResponse = await fetch(options.backupEndpoint);
-      if (!backupResponse.ok) {
-        throw new Error(`备用API HTTP错误! status: ${backupResponse.status}`);
-      }
-      return await backupResponse.json();
-    } catch (backupError) {
-      console.error('备用API调用失败:', backupError);
-      throw backupError;
-    }
-  }
-  
-  const url = `${apiBaseUrl}${endpoint}?${new URLSearchParams(params)}`;
-  
-  // 最大重试次数
-  const maxRetries = options.maxRetries || 2;
-  let retries = 0;
-  
-  while (retries <= maxRetries) {
-    try {
-      const response = await fetch(url);
-      
-      // 检查响应是否为HTML (通常表示出错或重定向)
-      const contentType = response.headers.get('content-type');
-      if (contentType && contentType.includes('text/html')) {
-        throw new Error('API返回了HTML而不是JSON，可能是路由问题');
-      }
-      
-      // 判断响应是否成功
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      // 解析JSON
-      return await response.json();
-    } catch (error) {
-      console.error(`API调用失败 (尝试 ${retries + 1}/${maxRetries + 1}):`, error);
-      
-      // 最后一次尝试失败
-      if (retries === maxRetries) {
-        // 如果是在EdgeOne上且失败，尝试备用方案
-        if (apiBaseUrl && options.backupEndpoint) {
-          console.log('尝试备用API...');
-          try {
-            const backupResponse = await fetch(options.backupEndpoint);
-            if (backupResponse.ok) {
-              return await backupResponse.json();
-            }
-          } catch (backupError) {
-            console.error('备用API也失败:', backupError);
-          }
-        }
-        throw error;
-      }
-      
-      // 否则重试
-      retries++;
-      // 增加延迟
-      await new Promise(resolve => setTimeout(resolve, 1000 * retries));
-    }
-  }
-}
-
 // 获取IP信息
 async function fetchIPInfo(ip) {
   if (!ip) {
@@ -285,28 +200,31 @@ async function fetchIPInfo(ip) {
       displayResult(ip, info);
       
       try {
-        // 使用安全API调用获取位置信息
-        const locationData = await safeApiCall('/_api/all-location', { ip }, {
-          maxRetries: 2,
-          // 如果EdgeOne上连续失败，使用Cloudflare Pages上的API作为备用
-          backupEndpoint: 'https://myip.pages.dev/_api/all-location?ip=' + ip
-        });
+        // 调用后端API获取所有位置信息（包括美团经纬度和位置信息）
+        const locationResponse = await fetch('/_api/all-location?' + new URLSearchParams({
+          ip: ip
+        }));
         
-        if (locationData.success) {
-          // 更新经纬度信息
-          info.lat = locationData.lat || '-';
-          info.lng = locationData.lng || '-';
-          info.accuracy = (info.lat !== '-' && info.lng !== '-') ? '高精度' : '低精度';
-          
-          // 更新显示
-          displayResult(ip, info);
+        if (locationResponse.ok) {
+          const locationData = await locationResponse.json();
+          if (locationData.success) {
+            // 更新经纬度信息
+            info.lat = locationData.lat || '-';
+            info.lng = locationData.lng || '-';
+            info.accuracy = (info.lat !== '-' && info.lng !== '-') ? '高精度' : '低精度';
+            
+            // 更新显示
+            displayResult(ip, info);
 
-          // 更新位置信息
-          if (locationData.locations) {
-            updateLocationInfo(locationData.locations);
+            // 更新位置信息
+            if (locationData.locations) {
+              updateLocationInfo(locationData.locations);
+            }
+          } else {
+            console.error('位置信息API返回错误:', locationData);
           }
         } else {
-          console.error('位置信息API返回错误:', locationData);
+          console.error('位置信息API请求失败:', locationResponse.status);
         }
       } catch (error) {
         console.error('获取位置信息失败:', error);
@@ -330,41 +248,19 @@ async function fetchPublicIP() {
     if (data.type === 'success' && data.ip) {
       fetchIPInfo(data.ip);
     } else {
-      // 如果主API失败，使用安全API调用获取公网IP
-      try {
-        const backupData = await safeApiCall('/_api/public-ip', {}, {
-          maxRetries: 2,
-          // 如果EdgeOne上连续失败，使用Cloudflare Pages上的API作为备用
-          backupEndpoint: 'https://myip.pages.dev/_api/public-ip'
-        });
-        
-        if (backupData.success && backupData.ip) {
-          fetchIPInfo(backupData.ip);
-        } else {
-          $("#result").html("无法获取公网IP地址。");
-        }
-      } catch (error) {
-        console.error('备用公网IP获取失败:', error);
-        $("#result").html("获取IP失败，请稍后重试。");
-      }
-    }
-  } catch (error) {
-    console.error('获取公网IP失败:', error);
-    // 尝试使用备用API
-    try {
-      const backupData = await safeApiCall('/_api/public-ip', {}, {
-        maxRetries: 2,
-        backupEndpoint: 'https://myip.pages.dev/_api/public-ip'
-      });
+      // 如果主API失败，使用后备方案
+      const backupResponse = await fetch('/_api/public-ip');
+      const backupData = await backupResponse.json();
       
       if (backupData.success && backupData.ip) {
         fetchIPInfo(backupData.ip);
       } else {
         $("#result").html("无法获取公网IP地址。");
       }
-    } catch (backupError) {
-      $("#result").html("获取IP失败，请稍后重试。");
     }
+  } catch (error) {
+    console.error('获取公网IP失败:', error);
+    $("#result").html("获取IP失败，请稍后重试。");
   }
 }
 
