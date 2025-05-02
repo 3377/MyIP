@@ -2,15 +2,19 @@
   "rewrites": [
     {
       "source": "/_api/all-location",
-      "destination": "/_api/all-location"
+      "destination": "/functions/_api/all-location.js"
     },
     {
       "source": "/_api/public-ip",
-      "destination": "/_api/public-ip"
+      "destination": "/functions/_api/public-ip.js"
     },
     {
       "source": "/_api/ip-info",
-      "destination": "/_api/ip-info"
+      "destination": "/functions/_api/ip-info.js"
+    },
+    {
+      "source": "/_api/*",
+      "destination": "/functions/_api/$1.js"
     }
   ]
 } 
