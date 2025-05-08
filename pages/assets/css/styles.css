@@ -243,9 +243,6 @@ h1 {
 
 .copy-tooltip {
     position: absolute;
-    top: -30px;
-    left: 50%;
-    transform: translateX(-50%);
     background: rgba(0, 0, 0, 0.8);
     color: white;
     padding: 6px 12px;
@@ -253,34 +250,35 @@ h1 {
     font-size: 12px;
     display: none;
     white-space: nowrap;
-    z-index: 1000;
+    z-index: 9999;
     backdrop-filter: blur(4px);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    animation: tooltipFade 0.3s ease-in-out;
+    left: 50%;
+    transform: translateX(-50%);
+    top: -30px;
 }
 
 .copy-tooltip::after {
     content: '';
     position: absolute;
-    bottom: -5px;
-    left: 50%;
-    transform: translateX(-50%);
     width: 0;
     height: 0;
     border-left: 5px solid transparent;
     border-right: 5px solid transparent;
     border-top: 5px solid rgba(0, 0, 0, 0.8);
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
-@keyframes tooltipFade {
-    from {
-        opacity: 0;
-        transform: translate(-50%, 5px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translate(-50%, 0);
+/* 移动端样式 */
+@media (max-width: 768px) {
+    .copy-tooltip {
+        position: fixed;
+        bottom: 20px;
+        top: auto;
+        left: 50%;
+        transform: translateX(-50%);
     }
 }
 
@@ -379,49 +377,4 @@ h1 {
     h1 {
         font-size: 2.5rem;
     }
-
-    .copy-tooltip {
-        /* 在手机端显示在元素下方 */
-        top: auto;
-        bottom: -30px;
-        position: fixed;
-        /* 确保不会超出视口边界 */
-        left: 50%;
-        transform: translateX(-50%);
-        /* 增加z-index确保显示在最上层 */
-        z-index: 9999;
-    }
-
-    .copy-tooltip::after {
-        /* 箭头指向上方 */
-        bottom: auto;
-        top: -5px;
-        border-bottom: 5px solid rgba(0, 0, 0, 0.8);
-        border-top: none;
-    }
-
-    @keyframes tooltipFade {
-        from {
-            opacity: 0;
-            transform: translate(-50%, -5px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translate(-50%, 0);
-        }
-    }
-}
-
-/* 在页面内容中间添加底部弹窗类 */
-.tooltip-bottom {
-    top: auto !important;
-    bottom: -30px !important;
-}
-
-.tooltip-bottom::after {
-    bottom: auto !important;
-    top: -5px !important;
-    border-bottom: 5px solid rgba(0, 0, 0, 0.8) !important;
-    border-top: none !important;
 }
