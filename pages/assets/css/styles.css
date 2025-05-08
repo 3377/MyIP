@@ -379,4 +379,49 @@ h1 {
     h1 {
         font-size: 2.5rem;
     }
+
+    .copy-tooltip {
+        /* 在手机端显示在元素下方 */
+        top: auto;
+        bottom: -30px;
+        position: fixed;
+        /* 确保不会超出视口边界 */
+        left: 50%;
+        transform: translateX(-50%);
+        /* 增加z-index确保显示在最上层 */
+        z-index: 9999;
+    }
+
+    .copy-tooltip::after {
+        /* 箭头指向上方 */
+        bottom: auto;
+        top: -5px;
+        border-bottom: 5px solid rgba(0, 0, 0, 0.8);
+        border-top: none;
+    }
+
+    @keyframes tooltipFade {
+        from {
+            opacity: 0;
+            transform: translate(-50%, -5px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translate(-50%, 0);
+        }
+    }
+}
+
+/* 在页面内容中间添加底部弹窗类 */
+.tooltip-bottom {
+    top: auto !important;
+    bottom: -30px !important;
+}
+
+.tooltip-bottom::after {
+    bottom: auto !important;
+    top: -5px !important;
+    border-bottom: 5px solid rgba(0, 0, 0, 0.8) !important;
+    border-top: none !important;
 }

@@ -11,12 +11,25 @@ function createInfoItem(label, value) {
       "</div>"
     );
   }
-  // 否则，为value添加可点击复制功能
-  const className = label === "您的IP" ? "ip-value info-value" : "copyable-value info-value";
+  
+  // 确定类名和是否添加复制功能
+  let className = "info-value";
+  let copyAttr = "";
+  
+  // 为IP值和位置A-D添加复制功能
+  if (label === "您的IP" || 
+      label === "位置A" || 
+      label === "位置B" || 
+      label === "位置C" || 
+      label === "位置D") {
+    className += " copyable-value";
+    copyAttr = ` onclick="copyIP('${value}', this)"`;
+  }
+  
   return (
     '<div class="info-row"><span class="info-label">' +
     label +
-    `:</span><span class="${className}" onclick="copyIP('${value}', this)">` +
+    `:</span><span class="${className}"${copyAttr}>` +
     value +
     '<span class="copy-tooltip">已复制!</span></span></div>'
   );
@@ -139,30 +152,34 @@ async function displayResult(ip, info) {
 function updateLocationInfo(locationInfo) {
   $(".info-row").each(function () {
     const label = $(this).find(".info-label").text().trim();
+    
     if (label === "位置A:") {
+      const locationA = locationInfo.locationA || "-";
       $(this)
         .find(".info-value")
-        .text(locationInfo.locationA || "-");
+        .attr("onclick", `copyIP('${locationA}', this)`)
+        .text(locationA);
+        
     } else if (label === "位置B:") {
+      const locationB = locationInfo.locationB || "-";
       $(this)
         .find(".info-value")
-        .text(locationInfo.locationB || "-");
+        .attr("onclick", `copyIP('${locationB}', this)`)
+        .text(locationB);
+        
     } else if (label === "位置C:") {
       const address = locationInfo.recommend || "-";
       $(this)
         .find(".info-value")
-        .removeClass("copyable-value")
-        .addClass("copyable-value")
-        .attr("onclick", `window.copyIP('${address}')`)
-        .html(address + '<span class="copy-tooltip">已复制!</span>');
+        .attr("onclick", `copyIP('${address}', this)`)
+        .text(address);
+        
     } else if (label === "位置D:") {
       const standardAddress = locationInfo.standard_address || "-";
       $(this)
         .find(".info-value")
-        .removeClass("copyable-value")
-        .addClass("copyable-value")
-        .attr("onclick", `window.copyIP('${standardAddress}')`)
-        .html(standardAddress + '<span class="copy-tooltip">已复制!</span>');
+        .attr("onclick", `copyIP('${standardAddress}', this)`)
+        .text(standardAddress);
     }
   });
 }
@@ -316,11 +333,28 @@ window.copyIP = function (text, element) {
       // 隐藏所有其他的提示框
       document.querySelectorAll('.copy-tooltip').forEach(tip => {
         tip.style.display = 'none';
+        tip.classList.remove('tooltip-bottom');
       });
 
       // 显示当前元素的提示框
       const tooltip = element.querySelector('.copy-tooltip');
       if (tooltip) {
+        // 检查是否为移动设备
+        const isMobile = window.innerWidth <= 768;
+        
+        if (!isMobile) {
+          // 检查顶部空间是否足够
+          const elementRect = element.getBoundingClientRect();
+          const spaceAbove = elementRect.top;
+          
+          // 如果顶部空间不足，则将tooltip显示在下方
+          if (spaceAbove < 40) {
+            tooltip.classList.add('tooltip-bottom');
+          } else {
+            tooltip.classList.remove('tooltip-bottom');
+          }
+        }
+        
         tooltip.style.display = 'block';
         
         // 1.5秒后自动隐藏
