@@ -139,38 +139,30 @@ async function displayResult(ip, info) {
 function updateLocationInfo(locationInfo) {
   $(".info-row").each(function () {
     const label = $(this).find(".info-label").text().trim();
-    const $infoValue = $(this).find(".info-value");
-
     if (label === "位置A:") {
-      const valueA = locationInfo.locationA || "-";
-      $infoValue.text(valueA).addClass("copyable-value");
-      $infoValue.attr("onclick", `copyIP('${valueA.replace(/'/g, "\\'")}', this)`);
-      if ($infoValue.find('.copy-tooltip').length === 0) {
-        $infoValue.append('<span class="copy-tooltip">已复制!</span>');
-      }
+      $(this)
+        .find(".info-value")
+        .text(locationInfo.locationA || "-");
     } else if (label === "位置B:") {
-      const valueB = locationInfo.locationB || "-";
-      $infoValue.text(valueB).addClass("copyable-value");
-      $infoValue.attr("onclick", `copyIP('${valueB.replace(/'/g, "\\'")}', this)`);
-      if ($infoValue.find('.copy-tooltip').length === 0) {
-        $infoValue.append('<span class="copy-tooltip">已复制!</span>');
-      }
+      $(this)
+        .find(".info-value")
+        .text(locationInfo.locationB || "-");
     } else if (label === "位置C:") {
       const address = locationInfo.recommend || "-";
       $(this)
         .find(".info-value")
         .removeClass("copyable-value")
         .addClass("copyable-value")
-        .attr("onclick", `window.copyIP('${address.replace(/'/g, "\\'")}', this)`)
-        .html(address.replace(/</g, "&lt;").replace(/>/g, "&gt;") + '<span class="copy-tooltip">已复制!</span>');
+        .attr("onclick", `window.copyIP('${address}')`)
+        .html(address + '<span class="copy-tooltip">已复制!</span>');
     } else if (label === "位置D:") {
       const standardAddress = locationInfo.standard_address || "-";
       $(this)
         .find(".info-value")
         .removeClass("copyable-value")
         .addClass("copyable-value")
-        .attr("onclick", `window.copyIP('${standardAddress.replace(/'/g, "\\'")}', this)`)
-        .html(standardAddress.replace(/</g, "&lt;").replace(/>/g, "&gt;") + '<span class="copy-tooltip">已复制!</span>');
+        .attr("onclick", `window.copyIP('${standardAddress}')`)
+        .html(standardAddress + '<span class="copy-tooltip">已复制!</span>');
     }
   });
 }
