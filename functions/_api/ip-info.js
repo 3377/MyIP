@@ -13,8 +13,16 @@ function decodeUnicode(str) {
 async function fetchAdditionalInfo(ip) {
   try {
     const [overseasResponse, ipv6Response] = await Promise.allSettled([
-      fetch('https://ipv4-overseas.itdog.plus/'),
-      fetch('https://ipv6.itdog.cn/')
+      fetch('https://ipv4-overseas.itdog.plus', {
+        headers: {
+          'Accept': 'application/json'
+        }
+      }),
+      fetch('https://ipv6.itdog.cn', {
+        headers: {
+          'Accept': 'application/json'
+        }
+      })
     ]);
 
     let overseas_ip = "-";
