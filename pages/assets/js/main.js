@@ -98,11 +98,11 @@ async function displayResult(ip, info) {
   content += createInfoItem("洲别", info.continent || "-");
   content += createInfoItem("国家", info.country || "-");
   content += createInfoItem("出国IP", info.overseas_ip || "-");
-  content += createInfoItem("时区", "UTC+8");
-  content += createInfoItem("地址", info.overseas_address || "-");
+  content += createInfoItem("出国地址", info.overseas_address || "-");
   content += createInfoItem("IPv6", info.ipv6_address || "-");
-  content += createInfoItem("ISP", info.isp || "-");
   content += createInfoItem("IPv6地址", info.ipv6_location || "-");
+  content += createInfoItem("ISP", info.isp || "-");
+  content += createInfoItem("时区", "UTC+8");
   content += createInfoItem("纬度", info.lat || "-");
   content += createInfoItem("经度", info.lng || "-");
   content += createInfoItem("省份", info.prov || "-");
@@ -167,6 +167,63 @@ function updateLocationInfo(locationInfo) {
   });
 }
 
+// Unicode解码辅助函数
+function decodeUnicode(str) {
+  try {
+    return str.replace(/\\u[\dA-Fa-f]{4}/g, (match) => {
+      return String.fromCharCode(parseInt(match.replace(/\\u/g, ''), 16));
+    });
+  } catch (error) {
+    return str;
+  }
+}
+
+// 获取出国IP信息
+async function fetchOverseasIP() {
+  try {
+    const response = await fetch('https://ipv4-overseas.itdog.plus', {
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+    const data = await response.json();
+    
+    if (data.type === 'success') {
+      return {
+        ip: data.ip || '-',
+        address: data.address ? decodeUnicode(data.address) : '-'
+      };
+    }
+    return { ip: '-', address: '-' };
+  } catch (error) {
+    console.error('获取出国IP失败:', error);
+    return { ip: '-', address: '-' };
+  }
+}
+
+// 获取IPv6信息
+async function fetchIPv6Info() {
+  try {
+    const response = await fetch('https://ipv6.itdog.cn', {
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+    const data = await response.json();
+    
+    if (data.type === 'success') {
+      return {
+        ip: data.ip || '-',
+        address: data.address ? decodeUnicode(data.address) : '-'
+      };
+    }
+    return { ip: '-', address: '-' };
+  } catch (error) {
+    console.error('获取IPv6信息失败:', error);
+    return { ip: '-', address: '-' };
+  }
+}
+
 // 获取IP信息
 async function fetchIPInfo(ip) {
   if (!ip) {
@@ -175,50 +232,73 @@ async function fetchIPInfo(ip) {
   }
 
   try {
-    // 调用后端API获取完整IP信息（包括出国IP和IPv6信息）
-    const response = await fetch(`/_api/ip-info?ip=${ip}`);
-    const data = await response.json();
+    // 并行调用后端API和前端API获取完整信息
+    const [backendResponse, overseasData, ipv6Data] = await Promise.allSettled([
+      fetch(`/_api/ip-info?ip=${ip}`),
+      fetchOverseasIP(),
+      fetchIPv6Info()
+    ]);
     
-    if (data.success && data.info) {
-      // 使用后端API返回的完整信息
-      const info = data.info;
+    let info = {};
+    
+    // 处理后端API响应
+    if (backendResponse.status === 'fulfilled' && backendResponse.value.ok) {
+      const backendData = await backendResponse.value.json();
+      if (backendData.success && backendData.info) {
+        info = backendData.info;
+      }
+    }
+    
+    // 处理出国IP信息
+    if (overseasData.status === 'fulfilled') {
+      info.overseas_ip = overseasData.value.ip;
+      info.overseas_address = overseasData.value.address;
+    } else {
+      info.overseas_ip = '-';
+      info.overseas_address = '-';
+    }
+    
+    // 处理IPv6信息
+    if (ipv6Data.status === 'fulfilled') {
+      info.ipv6_address = ipv6Data.value.ip;
+      info.ipv6_location = ipv6Data.value.address;
+    } else {
+      info.ipv6_address = '-';
+      info.ipv6_location = '-';
+    }
 
-      // 显示基本数据
-      displayResult(ip, info);
+    // 显示基本数据
+    displayResult(ip, info);
       
-      try {
-        // 调用后端API获取所有位置信息（包括美团经纬度和位置信息）
-        const locationResponse = await fetch('/_api/all-location?' + new URLSearchParams({
-          ip: ip
-        }));
-        
-        if (locationResponse.ok) {
-          const locationData = await locationResponse.json();
-          if (locationData.success) {
-            // 更新经纬度信息
-            info.lat = locationData.lat || '-';
-            info.lng = locationData.lng || '-';
-            info.accuracy = (info.lat !== '-' && info.lng !== '-') ? '高精度' : '低精度';
-            
-            // 更新显示
-            displayResult(ip, info);
+    try {
+      // 调用后端API获取所有位置信息（包括美团经纬度和位置信息）
+      const locationResponse = await fetch('/_api/all-location?' + new URLSearchParams({
+        ip: ip
+      }));
+      
+      if (locationResponse.ok) {
+        const locationData = await locationResponse.json();
+        if (locationData.success) {
+          // 更新经纬度信息
+          info.lat = locationData.lat || '-';
+          info.lng = locationData.lng || '-';
+          info.accuracy = (info.lat !== '-' && info.lng !== '-') ? '高精度' : '低精度';
+          
+          // 更新显示
+          displayResult(ip, info);
 
-            // 更新位置信息
-            if (locationData.locations) {
-              updateLocationInfo(locationData.locations);
-            }
-          } else {
-            console.error('位置信息API返回错误:', locationData);
+          // 更新位置信息
+          if (locationData.locations) {
+            updateLocationInfo(locationData.locations);
           }
         } else {
-          console.error('位置信息API请求失败:', locationResponse.status);
+          console.error('位置信息API返回错误:', locationData);
         }
-      } catch (error) {
-        console.error('获取位置信息失败:', error);
+      } else {
+        console.error('位置信息API请求失败:', locationResponse.status);
       }
-    } else {
-      console.error('后端API返回错误:', data);
-      $("#result").html(data.message || "获取IP信息失败。");
+    } catch (error) {
+      console.error('获取位置信息失败:', error);
     }
   } catch (error) {
     console.error('获取IP信息失败:', error);
