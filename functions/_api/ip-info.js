@@ -17,29 +17,33 @@ async function fetchAdditionalInfo(ip) {
       fetch('https://ipv6.itdog.cn/')
     ]);
 
-    let zipcode = "-";
-    let adcode = "-";
+    let overseas_ip = "-";
+    let overseas_address = "-";
+    let ipv6_address = "-";
+    let ipv6_location = "-";
 
     // 处理出国IP信息
     if (overseasResponse.status === 'fulfilled' && overseasResponse.value.ok) {
       const overseasData = await overseasResponse.value.json();
-      if (overseasData.type === 'success' && overseasData.address) {
-        zipcode = decodeUnicode(overseasData.address);
+      if (overseasData.type === 'success') {
+        overseas_ip = overseasData.ip || "-";
+        overseas_address = overseasData.address ? decodeUnicode(overseasData.address) : "-";
       }
     }
 
     // 处理IPv6信息
     if (ipv6Response.status === 'fulfilled' && ipv6Response.value.ok) {
       const ipv6Data = await ipv6Response.value.json();
-      if (ipv6Data.type === 'success' && ipv6Data.address) {
-        adcode = decodeUnicode(ipv6Data.address);
+      if (ipv6Data.type === 'success') {
+        ipv6_address = ipv6Data.ip || "-";
+        ipv6_location = ipv6Data.address ? decodeUnicode(ipv6Data.address) : "-";
       }
     }
 
-    return { zipcode, adcode };
+    return { overseas_ip, overseas_address, ipv6_address, ipv6_location };
   } catch (error) {
     console.error('获取额外信息失败:', error);
-    return { zipcode: "-", adcode: "-" };
+    return { overseas_ip: "-", overseas_address: "-", ipv6_address: "-", ipv6_location: "-" };
   }
 }
 
@@ -79,16 +83,16 @@ export async function onRequest(context) {
         info: {
           continent: data.continent?.name || "亚洲",
           country: data.country?.name || "中国",
-          zipcode: additionalInfo.zipcode, // 出国IP信息
-          owner: data.as?.name || "-",
+          overseas_ip: additionalInfo.overseas_ip, // 出国IP地址
+          overseas_address: additionalInfo.overseas_address, // 出国IP地址信息
           isp: data.as?.info || "-",
-          adcode: additionalInfo.adcode, // IPv6地址信息
+          ipv6_address: additionalInfo.ipv6_address, // IPv6地址
+          ipv6_location: additionalInfo.ipv6_location, // IPv6地址信息
           lat: data.location?.latitude || "-",
           lng: data.location?.longitude || "-",
           prov: data.regions?.[0] || "-",
           city: data.regions?.[1] || "-",
-          district: data.regions?.[2] || "-",
-          accuracy: data.location?.latitude && data.location?.longitude ? "高精度" : "低精度"
+          district: data.regions?.[2] || "-"
         }
       }), {
         headers: {

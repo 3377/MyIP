@@ -97,12 +97,12 @@ async function displayResult(ip, info) {
   content += createInfoItem("您的IP", ip);
   content += createInfoItem("洲别", info.continent || "-");
   content += createInfoItem("国家", info.country || "-");
-  content += createInfoItem("邮编", info.zipcode || "-");
+  content += createInfoItem("出国IP", info.overseas_ip || "-");
   content += createInfoItem("时区", "UTC+8");
-  content += createInfoItem("精度", info.accuracy || "-");
-  content += createInfoItem("所有者", info.owner || "-");
+  content += createInfoItem("地址", info.overseas_address || "-");
+  content += createInfoItem("IPv6", info.ipv6_address || "-");
   content += createInfoItem("ISP", info.isp || "-");
-  content += createInfoItem("行政码", info.adcode || "-");
+  content += createInfoItem("IPv6地址", info.ipv6_location || "-");
   content += createInfoItem("纬度", info.lat || "-");
   content += createInfoItem("经度", info.lng || "-");
   content += createInfoItem("省份", info.prov || "-");
