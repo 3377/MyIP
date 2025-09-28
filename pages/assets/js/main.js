@@ -175,26 +175,13 @@ async function fetchIPInfo(ip) {
   }
 
   try {
-    // 从百度API获取IP基础信息
-    const response = await fetch(`https://qifu-api.baidubce.com/ip/geo/v1/district?ip=${ip}`);
+    // 调用后端API获取完整IP信息（包括出国IP和IPv6信息）
+    const response = await fetch(`/_api/ip-info?ip=${ip}`);
     const data = await response.json();
     
-    if (data.code === 'Success' && data.data) {
-      // 转换百度API返回的数据格式
-      const info = {
-        continent: data.data.continent || '-',
-        country: data.data.country || '-',
-        prov: data.data.prov || '-',
-        city: data.data.city || '-',
-        district: data.data.district || '-',
-        isp: data.data.isp || '-',
-        lat: '-',
-        lng: '-',
-        owner: data.data.owner || '-',
-        accuracy: '-',
-        zipcode: data.data.zipcode || '-',
-        adcode: data.data.adcode || '-'
-      };
+    if (data.success && data.info) {
+      // 使用后端API返回的完整信息
+      const info = data.info;
 
       // 显示基本数据
       displayResult(ip, info);
@@ -230,7 +217,7 @@ async function fetchIPInfo(ip) {
         console.error('获取位置信息失败:', error);
       }
     } else {
-      console.error('百度API返回错误:', data);
+      console.error('后端API返回错误:', data);
       $("#result").html(data.message || "获取IP信息失败。");
     }
   } catch (error) {
