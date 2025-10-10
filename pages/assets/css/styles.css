@@ -239,6 +239,8 @@ h1 {
     cursor: pointer;
     position: relative;
     font-weight: 400;
+    /* 确保tooltip有正确的定位上下文 */
+    display: inline-block;
 }
 
 .copy-tooltip {
@@ -288,6 +290,8 @@ h1 {
     cursor: pointer;
     position: relative;
     transition: opacity 0.2s ease;
+    /* 确保tooltip有正确的定位上下文 */
+    display: inline-block;
 }
 
 .copyable-value:hover {
@@ -301,7 +305,6 @@ h1 {
 .loading {
     text-align: center;
     padding: 0 20px;
-    color: var(--value-color);
 }
 
 .spinner-border {
@@ -378,5 +381,28 @@ h1 {
 
     h1 {
         font-size: 2.5rem;
+    }
+    
+    /* 修复手机端tooltip定位问题 */
+    .copy-tooltip {
+        /* 使用右对齐来避免超出屏幕 */
+        left: auto;
+        right: 0;
+        transform: none;
+        top: -35px;
+    }
+    
+    .copy-tooltip::after {
+        /* 调整箭头位置 */
+        left: auto;
+        right: 10px;
+        transform: none;
+    }
+    
+    /* 确保可复制元素有足够的定位上下文 */
+    .copyable-value,
+    .ip-value {
+        display: inline-block;
+        position: relative;
     }
 }
