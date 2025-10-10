@@ -390,10 +390,10 @@ window.copyIP = function (text, element) {
       if (tooltip) {
         tooltip.style.display = 'block';
         
-        // 1.5秒后自动隐藏
+        // 2秒后自动隐藏
         setTimeout(() => {
           tooltip.style.display = 'none';
-        }, 1500);
+        }, 2000);
       }
     })
     .catch(function (err) {
@@ -408,7 +408,7 @@ window.copyIP = function (text, element) {
           tooltip.style.display = 'none';
           tooltip.textContent = '已复制!';
           tooltip.style.background = 'rgba(0, 0, 0, 0.8)';
-        }, 1500);
+        }, 2000);
       }
     });
 };

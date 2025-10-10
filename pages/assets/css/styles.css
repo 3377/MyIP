@@ -378,6 +378,17 @@ h1 {
         text-overflow: ellipsis;
         padding-left: 5px;
     }
+    
+    /* 为包含tooltip的元素解除overflow限制 */
+    .info-row .copyable-value,
+    .info-row .ip-value {
+        overflow: visible !important;
+    }
+    
+    /* 确保info-row本身也不裁剪内容 */
+    .info-row {
+        overflow: visible !important;
+    }
 
     h1 {
         font-size: 2.5rem;
@@ -385,17 +396,20 @@ h1 {
     
     /* 修复手机端tooltip定位问题 */
     .copy-tooltip {
-        /* 使用右对齐来避免超出屏幕 */
+        /* 使用absolute定位，但确保不被裁剪 */
+        position: absolute;
         left: auto;
-        right: 0;
+        right: -10px;
         transform: none;
-        top: -35px;
+        top: -40px;
+        min-width: 70px;
+        text-align: center;
     }
     
     .copy-tooltip::after {
         /* 调整箭头位置 */
         left: auto;
-        right: 10px;
+        right: 15px;
         transform: none;
     }
     
