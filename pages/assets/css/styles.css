@@ -394,23 +394,11 @@ h1 {
         font-size: 2.5rem;
     }
     
-    /* 修复手机端tooltip定位问题 */
+    /* 移动端tooltip保持居中显示，只需确保不被裁剪 */
     .copy-tooltip {
-        /* 使用absolute定位，但确保不被裁剪 */
-        position: absolute;
-        left: auto;
-        right: -10px;
-        transform: none;
-        top: -40px;
+        /* 保持默认的居中定位，不需要额外覆盖 */
         min-width: 70px;
         text-align: center;
-    }
-    
-    .copy-tooltip::after {
-        /* 调整箭头位置 */
-        left: auto;
-        right: 15px;
-        transform: none;
     }
     
     /* 确保可复制元素有足够的定位上下文 */
