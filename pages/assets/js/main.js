@@ -309,7 +309,7 @@ async function fetchIPInfo(ip) {
 // 获取公网IP
 async function fetchPublicIP() {
   try {
-    const response = await fetch('https://ipv4_cm.itdog.cn');
+    const response = await fetch('https://test.itdog.cn');
     const data = await response.json();
     
     if (data.type === 'success' && data.ip) {

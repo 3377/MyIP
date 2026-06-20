@@ -1,7 +1,7 @@
 export async function onRequest(context) {
   try {
     // 首先尝试从itdog获取IP
-    const itdogResponse = await fetch('https://ipv4_cm.itdog.cn');
+    const itdogResponse = await fetch('https://test.itdog.cn');
     const itdogData = await itdogResponse.json();
     
     if (itdogData && itdogData.type === 'success' && itdogData.ip) {
